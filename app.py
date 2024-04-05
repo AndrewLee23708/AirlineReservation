@@ -1,8 +1,9 @@
-from flask import Flask, render_template, request, session, requests, url_for, redirect, jsonify
+from flask import Flask, render_template, request, session, url_for, redirect, jsonify
 
 #creates connection database
 from database import setup_db   #function for DB connections
 
+#Initialize the app from Flask
 app = Flask(__name__)
 
 #### what is session object???
@@ -17,38 +18,30 @@ def index():
 
 @app.route('/login')    
 def login():
-    return 'hello world!'
+    return 'login!'
 
 @app.route('/register') 
 def register():
-    return 'hello world!'
+    return 'register!'
 
 @app.route('/homepage')
+def homepage():
+    return 'homepage'
+
+@app.route('/flightInfo')
+def flightInfo():
+    connection = setup_db()
+    cur = connection.cursor(dictionary=True)  # All SQL is done through cursor
+
+    # See how many users there are
+    cur.execute("SELECT * FROM flight WHERE status = 'upcoming'")
+    results = cur.fetchall()  # Use fetchall() to get all rows, fetchone for one row
+    cur.close()
+
+    return render_template('flight.html', flights = results)
 
 
-### DB test endpoint
-@app.route('/db-test')  # Test database connection
-def test_db():
-    try:
-        connection = setup_db()
-        cur = connection.cursor()  # All SQL is done through cursor
-
-        # See how many users there are
-        cur.execute("SELECT COUNT(*) FROM Users")
-        result = cur.fetchone()  # This will be a tuple like (count,)
-        cur.close()
-
-        # Good practice to return JSON
-        return jsonify({'number_of_users': result[0]})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-
-
-
-
-
-@app.route('logout')
+@app.route('/logout')
 def logout():
     session.pop('username')
     return redirect('/')
