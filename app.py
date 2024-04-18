@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, url_for, redirect, jsonify
+from flask import Flask, render_template, request, session, url_for, redirect, jsonify, Blueprint
 
 #creates connection database
 from database import setup_db   #function for DB connections
@@ -7,6 +7,23 @@ from database import setup_db   #function for DB connections
 app = Flask(__name__)
 
 #### what is session object???
+
+
+from api.auth.auth import auth_blueprint
+from api.user.user import user_blueprint
+from api.agent.agent import agent_blueprint
+from api.staff.staff import staff_blueprint
+
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    app.register_blueprint(user_blueprint, url_prefix='/user')
+    app.register_blueprint(agent_blueprint, url_prefix='/agent')
+    app.register_blueprint(staff_blueprint, url_prefix='/staff')
+    return app
+
+
+
 
 @app.route('/')
 def index():

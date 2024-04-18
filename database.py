@@ -6,10 +6,6 @@ def setup_db():
                             database = "airticket_reservation")
     return connection
 
-#side note: may have to configure mySQL config 'wait_timeout' as well
-
-### Below is test of db connection
-#
 # Let's do a quick test to see if database is connecting
 
 # conn = setup_db()        # first create connection object
@@ -17,7 +13,7 @@ def setup_db():
 
 # selectquery = "SELECT * FROM Users"    # interact with database
 # cursor.execute(selectquery)            # execture  
-# records=cursor.fetchall()
+# records=cursor.fetchall()              # fetchall fetches all row, fetchone fetches only one row
 # print("No. of registered users in the Scapes", cursor.rowcount)
 
 # for row in records:                    #records are returned in form of table
