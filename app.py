@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, session, url_for, redirect, jsonify, Blueprint
 
 #creates connection database
+#LOL
 from database import setup_db   #function for DB connections
 
 #Initialize the app from Flask
