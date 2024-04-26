@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <div class="container mt-5">
-    <h2>Login</h2>
+    <h2>Register</h2>
     <ul class="nav nav-tabs">
         <li class="nav-item">
             <a class="nav-link active" data-toggle="tab" href="#customer">Customer</a>
@@ -16,30 +16,20 @@
         <li class="nav-item">
             <a class="nav-link" data-toggle="tab" href="#agent">Agent</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#staff">Staff</a>
-        </li>
     </ul>
 
     <div class="tab-content">
         <div id="customer" class="container tab-pane active"><br>
-            <h3>Customer Login</h3>
-            <!-- Form content for Customer -->
-            <form action="{{ url_for('authentication.login_customer') }}" method="post">
+            <h3>Customer Registration</h3>
+            <!-- Form content for Customer Registration -->
+            <form action="{{ url_for('authentication.register_customer') }}" method="post">
                 <!-- fields -->
             </form>
         </div>
         <div id="agent" class="container tab-pane fade"><br>
-            <h3>Agent Login</h3>
-            <!-- Form content for Agent -->
-            <form action="{{ url_for('authentication.login_agent') }}" method="post">
-                <!-- fields -->
-            </form>
-        </div>
-        <div id="staff" class="container tab-pane fade"><br>
-            <h3>Staff Login</h3>
-            <!-- Form content for Staff -->
-            <form action="{{ url_for('authentication.login_airline_staff') }}" method="post">
+            <h3>Agent Registration</h3>
+            <!-- Form content for Agent Registration -->
+            <form action="{{ url_for('authentication.register_agent') }}" method="post">
                 <!-- fields -->
             </form>
         </div>

@@ -3,7 +3,7 @@ import mysql.connector
 def setup_db():
     connection = mysql.connector.connect(host="localhost", port="3306", 
                             user = "root", password ="",
-                            database = "airticket_reservation")
+                            database = "airticket_system")
     return connection
 
 # Let's do a quick test to see if database is connecting
