@@ -4,3 +4,12 @@ import forms
 from database import setup_db
 
 agent = Blueprint('booking_agent',__name__)
+
+
+@agent.route('/agent_profile', methods=['GET', 'POST'])
+
+
+@agent.route('/view_commissions', methods=['GET', 'POST'])
+
+
+@agent.route('/top_customers', methods=['GET', 'POST'])

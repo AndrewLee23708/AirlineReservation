@@ -25,9 +25,8 @@ def create_app():
 
     return app
 
-
 if __name__ == '__main__':
-    app = create_app()  # Only if using application factory pattern
+    app = create_app()
     app.run(debug=True)
 
 

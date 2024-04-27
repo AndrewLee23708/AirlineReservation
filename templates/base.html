@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NYU Flights{% endblock %}</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .navbar {
+            background-color: #57068c; /* NYU purple */
+            font-size: 0.9em; /* Smaller text */
+        }
+        .navbar-brand, .nav-link {
+            color: white !important;
+        }
+        .navbar-nav {
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .navbar-brand {
+            flex-grow: 1;
+            font-weight: 700; /* Roboto bold for brand */
+        }
+        .nav-link.active {
+            background-color: #311b92; /* A darker shade of purple for active tab */
+        }
+        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+            color: white;
+            background-color: #311b92;
+        }
+        .nav-tabs .nav-link {
+            border: none;
+            color: white;
+            background-color: transparent;
+        }
+        .nav-tabs .nav-link:hover {
+            border: none;
+            background-color: #311b92;
+        }
+        /* Additional styles can be added here */
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <a class="navbar-brand" href="{{ url_for('general.home') }}">
+            <img src="{{ url_for('static', filename='logo.png') }}" width="30" height="30" alt="NYU Logo"> NYU Flights
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link" href="{{ url_for('general.view_flights') }}">View/Book Flights</a>
+                <a class="nav-item nav-link" href="{{ url_for('general.flight_status') }}">Flight Status</a>
+                <a class="nav-item nav-link" href="{{ url_for('general.profile') }}">Profile</a>
+                {% if session['logged_in'] %}
+                <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
+                {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

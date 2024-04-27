@@ -3,7 +3,7 @@ from flask_bcrypt import Bcrypt
 import forms
 from database import setup_db
 
-auth = Blueprint('authentication',__name__)
+auth = Blueprint('authentication',__name__)       #html will reference this as authentication
 bcrypt = Bcrypt() 
 
 ### NOTE: To access this endpoint, you have to have auth/[whatever endpoint]
@@ -35,13 +35,13 @@ def login_customer():
             session['email'] = form.email.data
             session['type'] = 'customer'
             
-            return redirect(url_for('home'))  # Change later           
+            return redirect(url_for('general.home'))  # Bring back to homepage         
         
         else:  # handle the case when the email does not exist
             flash('Email or Password is incorrect', 'danger')
 
     # This part is executed on GET request, which is responsible for retrieving the form page to display to the user
-    return render_template('login_customer.html', form = form)      
+    return render_template('login_customer.html', form = form)       #we don't need to render template then???
 
 
 
@@ -186,9 +186,9 @@ def register_agent():
                         (email, hashed_password, booking_agent_id))
             conn.commit()
 
-            return redirect(url_for('login_agent'))      
+            return redirect(url_for('auth.login'))      #redirect to this endpoint
         cur.close()
-    return render_template('register_agent.html', title='Register as Agent', form=form)
+    return render_template('login.html', form=form, tab='agent')     #bring to agent login tab
 
 
 
@@ -218,11 +218,11 @@ def register_airline_staff():
                         (username, hashed_password, first_name, last_name, date_of_birth, airline_name))
             conn.commit()
             flash(f'Account created for {username}!', 'success')
-            return redirect(url_for('login_airline_staff'))
+            return redirect(url_for('login_airline_staff'))       ### redirect user back to login page to login
 
         cur.close()
 
-    return render_template('register_airline_staff.html', form=form)
+    return render_template('login.html', form=form, tab='staff')
 
 
 

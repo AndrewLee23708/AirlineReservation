@@ -6,6 +6,17 @@ def setup_db():
                             database = "airticket_system")
     return connection
 
+
+
+
+
+
+
+
+
+
+
+
 # Let's do a quick test to see if database is connecting
 
 # conn = setup_db()        # first create connection object
