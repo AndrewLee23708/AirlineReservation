@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+        <form class="row g-3" method="POST" action="">
+            {{ form.hidden_tag() }}
+                <legend class="border-bottom mb-4">{{ title }}</legend>
+                <div class="form-group">
+                    {{ form.username.label(class="form-control-label") }}
+                    {% if form.username.errors %}
+                        {{ form.username(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.username.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.username(class="form-control") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.password.label(class="form-control-label") }}
+                    {% if form.password.errors %}
+                        {{ form.password(class="form-control is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.password.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.password(class="form-control") }}
+                    {% endif %}
+                </div>
+            <div class="spacer"></div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+            <small class="text-muted ml-2">
+                <a href="#">Forgot Password?</a>
+            </small>
+        </form>
+    </div></div>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Need An Account? <a class="ml-2" href="{{ url_for('authentication.register') }}">Sign Up Now</a>
+        </small>
+    </div>
+{% endblock content %}

@@ -57,7 +57,7 @@
                 <a class="nav-item nav-link" href="{{ url_for('general.view_flights') }}">View/Book Flights</a>
                 <a class="nav-item nav-link" href="{{ url_for('general.flight_status') }}">Flight Status</a>
                 <a class="nav-item nav-link" href="{{ url_for('general.profile') }}">Profile</a>
-                {% if session['logged_in'] %}
+                {% if session['type'] %}
                 <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
                 {% else %}
                 <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>

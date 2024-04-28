@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Profile</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Customer Spending Profile</h2>
+    <p>Review your spending habits over the selected date range.</p>
+    
+    <!-- Spending form to select date range -->
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="start_date">Start Date:</label>
+            {{ form.start_date(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label for="end_date">End Date:</label>
+            {{ form.end_date(class='form-control') }}
+        </div>
+        <button type="submit" class="btn btn-primary">Update Chart</button>
+    </form>
+
+    <!-- Display the generated spending chart image -->
+    {% if plot_url %}
+        <div class="mt-4">
+            <h3>Spending Chart</h3>
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Monthly Spending Chart" style="max-width: 100%;">
+        </div>
+    {% endif %}
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

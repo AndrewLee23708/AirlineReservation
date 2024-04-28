@@ -1,69 +1,17 @@
-{% extends 'base.html' %}
-
-{% block title %}
-Login | NYU Airline Reservation
-{% endblock %}
-
+{% extends "base.html" %}
 {% block content %}
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Login</h2>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#customer">Customer</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#agent">Agent</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#staff">Staff</a>
-        </li>
-    </ul>
-
-    <div class="tab-content">
-        <div id="customer" class="container tab-pane active"><br>
-            <h3>Customer Login</h3>
-            <form action="{{ url_for('authentication.login_customer') }}" method="post">
-                <input type="email" name="email" class="form-control" placeholder="Email" required>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-                <button type="submit" class="btn btn-primary mt-2">Login</button>
-            </form>
-        </div>
-        <div id="agent" class="container tab-pane fade"><br>
-            <h3>Agent Login</h3>
-            <form action="{{ url_for('authentication.login_agent') }}" method="post">
-                <input type="email" name="email" class="form-control" placeholder="Email" required>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-                <button type="submit" class="btn btn-primary mt-2">Login</button>
-            </form>
-        </div>
-        <div id="staff" class="container tab-pane fade"><br>
-            <h3>Staff Login</h3>
-            <form action="{{ url_for('authentication.login_airline_staff') }}" method="post">
-                <input type="text" name="username" class="form-control" placeholder="Username" required>
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
-                <button type="submit" class="btn btn-primary mt-2">Login</button>
-            </form>
+    <div class="content-section">
+        <div class="row g-3">
+            <legend class="border-bottom mb-4">Welcome</legend>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.login_customer') }}" class="btn btn-outline-primary">Login as a customer</a>
+            </div>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.login_agent') }}" class="btn btn-outline-primary">Login as an agent</a>
+            </div>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.login_airline_staff') }}" class="btn btn-outline-primary">Login as an airline staff</a>
+            </div>
         </div>
     </div>
-    <div class="mt-4">
-        <p>Need to register? <a href="{{ url_for('authentication.register') }}">Click here to register</a>.</p>
-    </div>
-</div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
-
 {% endblock %}

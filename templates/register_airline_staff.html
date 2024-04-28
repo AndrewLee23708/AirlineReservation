@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block content %}
+    <div>
+        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
+        <form class="row g-3" method="POST" action="">
+          {{ form.hidden_tag() }}
+          <legend class="border-bottom mb-4">{{ title }}</legend>
+
+          <div class="col-md-4">
+            <label class="form-label">{{ form.first_name.label(class="form-control-label") }}</label>
+                {% if form.first_name.errors %}
+                    {{ form.first_name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.first_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.first_name(class="form-control") }}
+                {% endif %}
+          </div>
+          
+          <div class="col-md-4">
+            <label class="form-label">{{ form.last_name.label(class="form-control-label") }}</label>
+                {% if form.last_name.errors %}
+                    {{ form.last_name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.last_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.last_name(class="form-control") }}
+                {% endif %}
+          </div>
+
+            <div class="col-md-4">
+                <label class="form-label">{{ form.date_of_birth.label(class="form-control-label") }}</label>
+                {% if form.date_of_birth.errors %}
+                    {{ form.date_of_birth(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.date_of_birth.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.date_of_birth(class="form-control") }}
+                {% endif %}
+            </div>
+
+          <div class="col-md-4">
+            <label class="form-label">{{ form.username.label(class="form-control-label") }}</label>
+                {% if form.username.errors %}
+                    {{ form.username(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.username.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.username(class="form-control") }}
+                {% endif %}
+          </div>
+
+          <div class="col-md-4">
+              <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
+              {% if form.password.errors %}
+                  {{ form.password(class="form-control is-invalid") }}
+                  <div class="invalid-feedback">
+                      {% for error in form.password.errors %}
+                          {{ error }}
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ form.password(class="form-control") }}
+              {% endif %}
+          </div>
+
+          <div class="col-md-12">
+                <label class="form-label">{{ form.airline_name.label(class="form-control-label") }}</label>
+                {% if form.airline_name.errors %}
+                    {{ form.airline_name(class="form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for error in form.airline_name.errors %}
+                            <span>{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    {{ form.airline_name(class="form-control") }}
+                {% endif %}
+          </div>
+
+            <div class="space"></div>
+          <div class="col-12">
+            <button class="btn btn-primary" type="submit">Submit form</button>
+          </div>
+        </form>
+        </div></div>
+
+      </div>
+{% endblock content %}

@@ -1,59 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-<div class="container mt-5">
-    <h2>Register</h2>
-    <ul class="nav nav-tabs">
-        <li class="nav-item">
-            <a class="nav-link active" data-toggle="tab" href="#customer">Customer</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="tab" href="#agent">Agent</a>
-        </li>
-    </ul>
+{% extends "base.html" %}
+{% block content %}
+    <div class="content-section">
+        <div class="row g-3">
+            <legend class="border-bottom mb-4">Join Today</legend>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.register_customer') }}" class="btn btn-outline-primary">Register as a customer</a>
+            </div>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.register_agent') }}" class="btn btn-outline-primary">Register as an agent</a>
+            </div>
+            <div class="col-12">
+                    <a href="{{ url_for('authentication.register_airline_staff') }}" class="btn btn-outline-primary">Register as an airline staff</a>
+            </div>
+        </div>
 
-    <div class="tab-content">
-        <div id="customer" class="container tab-pane active"><br>
-            <h3>Customer Registration</h3>
-            <!-- Form content for Customer Registration -->
-            <form action="{{ url_for('authentication.register_customer') }}" method="post">
-                <input type="email" name="email" class="form-control" placeholder="Email" required><br>
-                <input type="text" name="name" class="form-control" placeholder="Full Name" required><br>
-                <input type="password" name="password" class="form-control" placeholder="Password" required><br>
-                <input type="text" name="building_number" class="form-control" placeholder="Building Number" required><br>
-                <input type="text" name="street" class="form-control" placeholder="Street" required><br>
-                <input type="text" name="city" class="form-control" placeholder="City" required><br>
-                <input type="text" name="state" class="form-control" placeholder="State" required><br>
-                <input type="text" name="phone_number" class="form-control" placeholder="Phone Number" required><br>
-                <input type="text" name="passport_number" class="form-control" placeholder="Passport Number" required><br>
-                <input type="date" name="passport_expiration" class="form-control" placeholder="Passport Expiration Date" required><br>
-                <input type="text" name="passport_country" class="form-control" placeholder="Passport Country" required><br>
-                <input type="date" name="date_of_birth" class="form-control" placeholder="Date of Birth" required><br>
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
-        </div>
-        <div id="agent" class="container tab-pane fade"><br>
-            <h3>Agent Registration</h3>
-            <!-- Form content for Agent Registration -->
-            <form action="{{ url_for('authentication.register_agent') }}" method="post">
-                <input type="email" name="email" class="form-control" placeholder="Email" required><br>
-                <input type="password" name="password" class="form-control" placeholder="Password" required><br>
-                <input type="number" name="booking_agent_id" class="form-control" placeholder="Booking Agent ID" required><br>
-                <button type="submit" class="btn btn-primary">Register</button>
-            </form>
-        </div>
     </div>
-</div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
-
+{% endblock %}
