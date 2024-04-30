@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>View Upcoming Flights</h2>
+    <p>Select a flight to book tickets.</p>
+
+    <!-- Flight search form -->
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="departure_place">Departure Airport/City:</label>
+            {{ form.departure_place(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label for="arrival_place">Arrival Airport/City:</label>
+            {{ form.arrival_place(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label for="departure_time">Departure Time:</label>
+            {{ form.departure_time(class='form-control') }}
+        </div>
+        <div class="form-group">
+            <label for="arrival_time">Arrival Time:</label>
+            {{ form.arrival_time(class='form-control') }}
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <!-- Display search results as a table -->
+    {% if flights %}
+    <div class="table-responsive mt-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Flight Number</th>
+                    <th>Departure Airport</th>
+                    <th>Arrival Airport</th>
+                    <th>Departure Time</th>
+                    <th>Arrival Time</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for flight in flights %}
+                <tr>
+                    <td>{{ flight.flight_num }}</td>
+                    <td>{{ flight.departure_airport }}</td>
+                    <td>{{ flight.arrival_airport }}</td>
+                    <td>{{ flight.departure_time }}</td>
+                    <td>{{ flight.arrival_time }}</td>
+                    <td>
+                        <a href="{{ url_for('general.view_flights', flight_num=flight.flight_num) }}" class="btn btn-success">Buy</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p>No flights available based on your search criteria. Please adjust your search and try again.</p>
+    {% endif %}
+</div>
+{% endblock %}

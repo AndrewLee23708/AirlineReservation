@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Profile - NYU Flights{% endblock %}</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f8f9fa; /* Slightly off-white background for the whole page */
+        }
+        .navbar {
+            background-color: #57068c; /* NYU purple */
+            padding: 0.5rem 1rem; /* Reduced padding */
+        }
+        .navbar-brand, .nav-link, .sidebar a {
+            color: white !important;
+        }
+        .nav-link:hover, .sidebar a:hover {
+            background-color: #5D3FD3; /* Light grey for hover */
+        }
+        .sidebar {
+            background-color: #CBC3E3; /* White background for the sidebar */
+            padding: 20px;
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow for depth */
+            color: #333; /* Dark grey for text, good contrast on white */
+        }
+        main {
+            background-color: #ffffff; /* White background for main content */
+            padding: 20px;
+            border-radius: 15px; /* Rounded corners */
+            margin-top: 20px; /* Space between navbar and content */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Soft shadow for depth */
+        }
+    </style>
+    
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('general.home') }}">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="NYU Logo" style="height: 30px;"> NYU Flights
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="sidebar">
+                    <h4>{{ session['type'] | capitalize }} Profile</h4>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a href="{{ url_for('general.profile') }}" class="nav-link">Overview</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#generalLinks" role="button" aria-expanded="false" aria-controls="generalLinks">General Links</a>
+                            <div class="collapse" id="generalLinks">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="{{ url_for('general.home') }}" class="nav-link">Home</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% if session['type'] == 'customer' %}
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#customerLinks" role="button" aria-expanded="false" aria-controls="customerLinks">Customer Links</a>
+                            <div class="collapse" id="customerLinks">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="#" class="nav-link">Link 1</a></li>
+                                    <li><a href="#" class="nav-link">Link 2</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% elif session['type'] == 'agent' %}
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#agentLinks" role="button" aria-expanded="false" aria-controls="agentLinks">Agent Links</a>
+                            <div class="collapse" id="agentLinks">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="#" class="nav-link">Link 1</a></li>
+                                    <li><a href="#" the nav-link">Link 2</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% elif session['type'] == 'staff' %}
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#staffLinks" role="button" aria-expanded="false" aria-controls="staffLinks">Staff Links</a>
+                            <div class="collapse" id="staffLinks">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="#" class="nav-link">Link 1</a></li>
+                                    <li><a href="#" class="nav-link">Link 2</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <main class="col-md-9">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

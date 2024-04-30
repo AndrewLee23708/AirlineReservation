@@ -9,13 +9,28 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            background-color: #f4f4f4; /* Light grey background */
         }
         .navbar {
             background-color: #57068c; /* NYU purple */
-            font-size: 0.9em; /* Smaller text */
+            padding: 0.5rem 1rem; /* Reduced padding for a slimmer navbar */
         }
-        .navbar-brand, .nav-link {
+        .navbar-brand, .nav-link, .sidebar a {
             color: white !important;
+        }
+        .sidebar {
+            padding: 1.5rem;
+            border-radius: 0.5rem; /* Rounded corners */
+            background-color: #fff; /* White background */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+            margin-top: 1rem; /* Space below navbar */
+        }
+        .main-content {
+            background-color: #fff;
+            border-radius: 0.5rem; /* Rounded corners */
+            margin-top: 1rem; /* Space below navbar */
+            padding: 2rem; /* Padding inside content area */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
         }
         .navbar-nav {
             width: 100%;
@@ -41,7 +56,9 @@
             border: none;
             background-color: #311b92;
         }
-        /* Additional styles can be added here */
+        .alert {
+            margin-top: 1em; /* Space between navbar and alert */
+        }
     </style>
 </head>
 <body>
@@ -57,14 +74,40 @@
                 <a class="nav-item nav-link" href="{{ url_for('general.view_flights') }}">View/Book Flights</a>
                 <a class="nav-item nav-link" href="{{ url_for('general.flight_status') }}">Flight Status</a>
                 <a class="nav-item nav-link" href="{{ url_for('general.profile') }}">Profile</a>
-                {% if session['type'] %}
-                <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
+                <!-- User greeting based on type -->
+                {% if 'type' in session %}
+                    {% if session['type'] == 'customer' %}
+                        <a class="nav-item nav-link disabled">Customer: {{ session['email'] }}</a>
+                    {% elif session['type'] == 'agent' %}
+                        <a class="nav-item nav-link disabled">Agent: {{ session['email'] }}</a>
+                    {% elif session['type'] == 'staff' %}
+                        <a class="nav-item nav-link disabled">Staff: {{ session['username'] }}</a>
+                    {% endif %}
+                    <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
                 {% else %}
-                <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>
+                    <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>
                 {% endif %}
             </div>
         </div>
     </nav>
+
+
+    <!-- Flash messages area -->
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
 
     <div class="container">
         {% block content %}{% endblock %}

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SubmitField
+from wtforms import StringField, PasswordField, DateField, SubmitField, DateTimeField
 from wtforms.validators import DataRequired, Length, Email
 
 '''
@@ -37,6 +37,7 @@ class AgentRegister(FlaskForm):
     booking_agent_id = StringField('Booking Agent ID', validators=[DataRequired(), Length(max=11)])
 
     submit = SubmitField('Agent Registeration')
+
 
 # Staff Registration Form
 class StaffRegister(FlaskForm):
@@ -81,7 +82,6 @@ class StaffLogin(FlaskForm):
 class PublicSearchUpcomingFlightForm(FlaskForm):
     departure_place = StringField('Departure Airport/City', validators=[])
     arrival_place = StringField('Arrival Airport/City', validators=[])
-
     departure_time = StringField('Departure Time', validators=[])               #time field is not importing correctly, use string field
     arrival_time = StringField('Arrival Time', validators=[])
 
@@ -102,6 +102,13 @@ class TimeInterval(FlaskForm):
 
     submit = SubmitField('Search')
 
+#For customers and agents purchasing things
+class Purchase(FlaskForm):
+    agent = StringField('Agent_ID', validators=[])
+    customer = StringField('Customer_Email', validators=[])
+    
+    submit = SubmitField('Purchase')
+
 ################
 # Customer-related Forms
 ################
@@ -109,10 +116,7 @@ class TimeInterval(FlaskForm):
 
 
 
-class CustomerPurchase(FlaskForm):
-    agent = StringField('Agent_ID', validators=[])
-    customer = StringField('Customer_Email', validators=[])
-    submit = SubmitField('Purchase')
+
 
 
 
@@ -127,4 +131,80 @@ class CustomerPurchase(FlaskForm):
 ################
 # Staff-related Forms
 ################
+
+# class CreateFlightForm(FlaskForm):
+#     # airline_name = StringField('Airline Name', validators=[DataRequired(), Length(min=1, max=50)])
+#     flight_num = IntegerField('Flight Number', validators=[DataRequired()])
+#     departure_airport = StringField('Departure Airport', validators=[DataRequired(), Length(min=1, max=50)])
+#     departure_time = DateTimeField('Departure Time', validators=[DataRequired()])
+#     arrival_airport = StringField('Arrival Airport', validators=[DataRequired(), Length(min=1, max=50)])
+#     arrival_time = DateTimeField('Arrival Time', validators=[DataRequired()])
+#     price = IntegerField('Price', validators=[DataRequired()])
+#     status = SelectField('Status', choices=['upcoming', 'in_progress', 'delayed'])
+#     airplane_id = IntegerField('Airplane ID', validators=[DataRequired()])
+
+#     submit = SubmitField('Create')
+
+# class AddAirplaneForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     airplane_id = IntegerField('Airplane ID', validators=[DataRequired()])
+#     seats = IntegerField('Seats', validators=[DataRequired()])
+
+#     submit = SubmitField('Add')
+
+
+# class AddAirportForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     airport_name = StringField('Airport Name', validators=[DataRequired(), Length(min=1, max=50)])
+#     airport_city = StringField('Airport City', validators=[DataRequired(), Length(min=1, max=50)])
+
+#     submit = SubmitField('Add')
+
+
+# class AirlineStaffSearchForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     start_time = DateField('Start Time', validators=[])
+#     end_time = DateField('End Time', validators=[])
+#     departure_place = StringField('Departure Airport/City', validators=[])
+#     arrival_place = StringField('Arrival Airport/City', validators=[])
+
+#     submit = SubmitField('Search Flight')
+
+
+# class ChangeFlightStatusForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     flight_num = IntegerField('Flight Number', validators=[DataRequired()])
+#     status = SelectField('New Status', choices=['', 'upcoming', 'in_progress', 'delayed'])
+
+#     submit = SubmitField('Submit Change')
+
+
+# class ViewTicketReportsForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     start_date = DateField('Start Date', validators=[])
+#     end_date = DateField('End Date', validators=[])
+
+#     submit = SubmitField('View Reports')
+
+
+# class ViewCommissionsForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     start_date = DateField('Start Date', validators=[])
+#     end_date = DateField('End Date', validators=[])
+
+#     submit = SubmitField('View Reports')
+
+
+# class GrantNewPermissionForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+#     permission = SelectField('Permission', choices=['Operator', 'Admin'])
+
+#     submit = SubmitField('Grant Permission')
+
+# class AddBookingAgentToAirlineForm(FlaskForm):
+#     identifier = StringField('Identifier')
+#     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
+
+#     submit = SubmitField('Add Booking Agent to Airline')
 

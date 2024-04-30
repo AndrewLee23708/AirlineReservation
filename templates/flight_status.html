@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container mt-4">
+        <h2>Check Flight Status</h2>
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ form.flight_number.label(class="form-label") }}
+                        {{ form.flight_number(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.departure_time.label(class="form-label") }}
+                        {{ form.departure_time(class="form-control") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.arrival_time.label(class="form-label") }}
+                        {{ form.arrival_time(class="form-control") }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
+                </form>
+            </div>
+        </div>
+
+        {% if search_results %}
+        <div class="card mt-4">
+            <div class="card-header">
+                Flight Search Results
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Flight Number</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for flight in search_results %}
+                        <tr>
+                            <td>{{ flight.flight_num }}</td>
+                            <td>{{ flight.departure_time }}</td>
+                            <td>{{ flight.arrival_time }}</td>
+                            <td>{{ flight.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+
+{% endblock content %}

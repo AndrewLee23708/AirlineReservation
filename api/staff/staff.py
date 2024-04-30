@@ -6,6 +6,8 @@ from database import setup_db
 ### staff dashboard
 staff = Blueprint('staff', __name__)
 
+### dashboard 
+### next to the dashboard will be a box containing all functionalities for all of these methods
 @staff.route('/staff_dashboard')
 def staff_dashboard():
     pass

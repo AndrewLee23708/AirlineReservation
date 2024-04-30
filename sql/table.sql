@@ -1,151 +1,103 @@
-CREATE TABLE `airline` (
-  `airline_name` varchar(50) NOT NULL,
-  PRIMARY KEY(`airline_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE airline(
+    name VARCHAR(20),
+    PRIMARY KEY (name)
+);
 
--- --------------------------------------------------------
+CREATE TABLE airport(
+    name VARCHAR(20),
+    city VARCHAR(20) NOT NULL,
+    PRIMARY KEY (name)
+);
 
---
--- Table structure for table `airline_staff`
---
+CREATE TABLE airplane(
+    id INT,
+    seats INT,
+    airline_name VARCHAR(20),
+    PRIMARY KEY (id),
+    FOREIGN KEY (airline_name) REFERENCES airline(name)
+);
 
-CREATE TABLE `airline_staff` (
-  `username` varchar(50) NOT NULL,
-  `password` varchar(60) NOT NULL,
-  `first_name` varchar(50) NOT NULL,
-  `last_name` varchar(50) NOT NULL,
-  `date_of_birth` date NOT NULL,
-  `airline_name` varchar(50) NOT NULL,
-  PRIMARY KEY(`username`),
-  FOREIGN KEY(`airline_name`) REFERENCES `airline`(`airline_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE airline_staff (
+    username VARCHAR(20),
+    password VARCHAR(20) NOT NULL,
+    first_name VARCHAR(20) NOT NULL, 
+    last_name VARCHAR(20) NOT NULL,
+    date_of_birth DATE,
+    airline_name VARCHAR(20) NOT NULL,
+    PRIMARY KEY (username),
+    FOREIGN KEY (airline_name) REFERENCES airline(name)
+);
 
--- --------------------------------------------------------
+CREATE TABLE permission (
+    username VARCHAR(20),
+    permission VARCHAR(20),
+    PRIMARY KEY (username, permission),
+    FOREIGN KEY (username) REFERENCES airline_staff(username)
+);
 
-CREATE TABLE `permission` (
-    `username` varchar(50) NOT NULL,
-    `permission_type` varchar(50) NOT NULL,
-    PRIMARY KEY(`username`, `permission_type`),
-    FOREIGN KEY(`username`) REFERENCES `airline_staff`(`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE flight(
+    flight_num INT,
+    departure_time DATETIME,
+    arrival_time DATETIME,
+    price DECIMAL(10,2),
+    status VARCHAR(20),
+    airline_name VARCHAR(20),
+    arrival_airport_name VARCHAR(50),
+    departure_airport_name VARCHAR(50),
+    airplane_id INT,
+    PRIMARY KEY (flight_num),
+    FOREIGN KEY (airline_name) REFERENCES airline(name),
+    FOREIGN KEY (arrival_airport_name) REFERENCES airport(name),
+    FOREIGN KEY (departure_airport_name) REFERENCES airport(name),
+    FOREIGN KEY (airplane_id) REFERENCES airplane(id)
+);
 
---
--- Table structure for table `airplane`
---
+CREATE TABLE booking_agent(
+    email VARCHAR(50),
+    password VARCHAR(20) NOT NULL,
+    booking_agent_id INT UNIQUE,
+    PRIMARY KEY (email)
+);
 
-CREATE TABLE `airplane` (
-  `airline_name` varchar(50) NOT NULL,
-  `airplane_id` int(11) NOT NULL,
-  `seats` int(11) NOT NULL,
-  PRIMARY KEY(`airline_name`, `airplane_id`),
-  FOREIGN KEY(`airline_name`) REFERENCES `airline`(`airline_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE ba_works_for(
+    email VARCHAR(50),
+    name VARCHAR(20),
+    PRIMARY KEY (email, name),
+    FOREIGN KEY (email) REFERENCES booking_agent(email),
+    FOREIGN KEY (name) REFERENCES airline(name)
+);
 
--- --------------------------------------------------------
+CREATE TABLE customer(
+    email VARCHAR(50),
+    name VARCHAR(20) NOT NULL,
+    password VARCHAR(20) NOT NULL,
+    building_number INT,
+    street VARCHAR(20),
+    city VARCHAR(20),
+    state VARCHAR(20),
+    phone_number VARCHAR(20),
+    passport_number VARCHAR(20) UNIQUE,
+    passport_expiration DATE,
+    passport_country VARCHAR(30),
+    date_of_birth DATE,
+    PRIMARY KEY(email)
+);
 
---
--- Table structure for table `airport`
---
+CREATE TABLE ticket(
+    ticket_id INT,
+    flight_num INT,
+    customer_email VARCHAR(50),
+    booking_agent_email VARCHAR(20),
+    PRIMARY KEY (ticket_id),
+    FOREIGN KEY (flight_num) REFERENCES flight(flight_num),
+    FOREIGN KEY (customer_email) REFERENCES customer(email),
+    FOREIGN KEY (booking_agent_email) REFERENCES booking_agent(email)
+);
 
-CREATE TABLE `airport` (
-  `airport_name` varchar(50) NOT NULL,
-  `airport_city` varchar(50) NOT NULL,
-  PRIMARY KEY(`airport_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `booking_agent`
---
-
-CREATE TABLE `booking_agent` (
-  `email` varchar(50) NOT NULL,
-  `password` varchar(60) NOT NULL,
-  `booking_agent_id` int(11) NOT NULL,
-  PRIMARY KEY(`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-CREATE TABLE `booking_agent_work_for` (
-  `email` varchar(50) NOT NULL,
-  `airline_name` varchar(50) NOT NULL,
-  PRIMARY KEY(`email`,`airline_name`),
-  FOREIGN KEY(`email`) REFERENCES `booking_agent`(`email`),
-  FOREIGN KEY(`airline_name`) REFERENCES `airline`(`airline_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `customer`
---
-
-CREATE TABLE `customer` (
-  `email` varchar(50) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `password` varchar(60) NOT NULL,
-  `building_number` varchar(30) NOT NULL,
-  `street` varchar(30) NOT NULL,
-  `city` varchar(30) NOT NULL,
-  `state` varchar(30) NOT NULL,
-  `phone_number` int(11) NOT NULL,
-  `passport_number` varchar(30) NOT NULL,
-  `passport_expiration` date NOT NULL,
-  `passport_country` varchar(50) NOT NULL,
-  `date_of_birth` date NOT NULL,
-  PRIMARY KEY(`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `flight`
---
-
-CREATE TABLE `flight` (
-  `airline_name` varchar(50) NOT NULL,
-  `flight_num` int(11) NOT NULL,
-  `departure_airport` varchar(50) NOT NULL,
-  `departure_time` datetime NOT NULL,
-  `arrival_airport` varchar(50) NOT NULL,
-  `arrival_time` datetime NOT NULL,
-  `price` decimal(10,0) NOT NULL,
-  `status` varchar(50) NOT NULL,
-  `airplane_id` int(11) NOT NULL,
-  PRIMARY KEY(`airline_name`, `flight_num`),
-  FOREIGN KEY(`airline_name`, `airplane_id`) REFERENCES `airplane`(`airline_name`, `airplane_id`),
-  FOREIGN KEY(`departure_airport`) REFERENCES `airport`(`airport_name`),
-  FOREIGN KEY(`arrival_airport`) REFERENCES `airport`(`airport_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `ticket`
---
-
-CREATE TABLE `ticket` (
-  `ticket_id` int(11) NOT NULL,
-  `airline_name` varchar(50) NOT NULL,
-  `flight_num` int(11) NOT NULL,
-  PRIMARY KEY(`ticket_id`),
-  FOREIGN KEY(`airline_name`, `flight_num`) REFERENCES `flight`(`airline_name`, `flight_num`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-
--- --------------------------------------------------------
-
---
--- Table structure for table `purchases`
---
-
-CREATE TABLE `purchases` (
-  `ticket_id` int(11) NOT NULL,
-  `customer_email` varchar(50) NOT NULL,
-  `booking_agent_id` int(11) NULL,
-  `purchase_date` date NOT NULL,
-  PRIMARY KEY(`ticket_id`, `customer_email`),
-  FOREIGN KEY(`ticket_id`) REFERENCES `ticket`(`ticket_id`),
-  FOREIGN KEY(`customer_email`) REFERENCES `customer`(`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE staff_works_for(
+    username VARCHAR(20),
+    name VARCHAR(20),
+    PRIMARY KEY (username, name),
+    FOREIGN KEY (username) REFERENCES airline_staff(username),
+    FOREIGN KEY (name) REFERENCES airline(name)
+);
