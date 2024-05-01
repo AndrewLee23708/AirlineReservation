@@ -1,0 +1,29 @@
+{% extends "base_profile.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Admin Dashboard</h2>
+
+    <!-- Grant Permission Form -->
+    <div class="card my-3">
+        <div class="card-header">
+            Grant New Permission
+        </div>
+        <div class="card-body">
+            <form method="POST">
+                {{ grant_permission_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ grant_permission_form.email.label }}
+                    {{ grant_permission_form.email(class='form-control') }}
+                </div>
+                <div class="form-group">
+                    {{ grant_permission_form.permission.label }}
+                    {{ grant_permission_form.permission(class='form-control') }}
+                </div>
+                <button type="submit" class="btn btn-primary">{{ grant_permission_form.submit.label }}</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

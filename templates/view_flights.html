@@ -50,7 +50,7 @@
                     <td>{{ flight.departure_time }}</td>
                     <td>{{ flight.arrival_time }}</td>
                     <td>
-                        <a href="{{ url_for('general.view_flights', flight_num=flight.flight_num) }}" class="btn btn-success">Buy</a>
+                        <a href="{{ url_for('general.purchase_ticket', flight_num=flight.flight_num) }}" class="btn btn-success">Buy</a>
                     </td>
                 </tr>
                 {% endfor %}

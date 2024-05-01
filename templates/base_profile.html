@@ -38,6 +38,7 @@
     </style>
     
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container-fluid">
@@ -54,6 +55,22 @@
         </div>
     </nav>
 
+        <!-- Flash messages area -->
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </div>
+
     <div class="container-fluid mt-3">
         <div class="row">
             <div class="col-md-3">
@@ -61,13 +78,15 @@
                     <h4>{{ session['type'] | capitalize }} Profile</h4>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a href="{{ url_for('general.profile') }}" class="nav-link">Overview</a>
+                            <a href="{{ url_for('general.profile') }}" class="nav-link">Profile</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#generalLinks" role="button" aria-expanded="false" aria-controls="generalLinks">General Links</a>
                             <div class="collapse" id="generalLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                     <li><a href="{{ url_for('general.home') }}" class="nav-link">Home</a></li>
+                                    <li><a href="{{ url_for('general.view_flights') }}" class="nav-link">View Flights</a></li>
+                                    <li><a href="{{ url_for('general.flight_status') }}" class="nav-link">Flight Status</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -76,8 +95,7 @@
                             <a class="nav-link collapsed" data-toggle="collapse" href="#customerLinks" role="button" aria-expanded="false" aria-controls="customerLinks">Customer Links</a>
                             <div class="collapse" id="customerLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li><a href="#" class="nav-link">Link 1</a></li>
-                                    <li><a href="#" class="nav-link">Link 2</a></li>
+                                    <li><a href="#" class="nav-link">No Links :C</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -101,7 +119,30 @@
                                 </ul>
                             </div>
                         </li>
+                        <!--  Permissions is a list of permissions, so don't forget this part-->
+                        <!-- Admin Tools Dropdown -->
+                        {% if 'permissions' in session and 'Admin' in session['permissions'] %}
+                        <li class="nav-item">
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#adminTools" role="button" aria-expanded="false" aria-controls="adminTools">Admin Tools</a>
+                            <div class="collapse" id="adminTools">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="{{ url_for('staff.staff_create_flight') }}" class="nav-link">Create Flight</a></li>
+                                    <li><a href="{{ url_for('staff.staff_add_airplane') }}" class="nav-link">Add Airplane</a></li>
+                                    <li><a href="{{ url_for('staff.staff_add_airport') }}" class="nav-link">Add Airport</a></li>
+                                    <li><a href="{{ url_for('staff.staff_grant_permission') }}" class="nav-link">Grant Permission</a></li>
+                                    <li><a href="{{ url_for('staff.staff_add_booking_agent') }}" class="nav-link">Add Booking Agent</a></li>
+                                </ul>
+                            </div>
+                        </li>
                         {% endif %}
+
+                        {% if 'permissions' in session and 'Operator' in session['permissions'] %}
+                        <li class="nav-item">
+                            <a href="{{ url_for('staff.staff_operator') }}" class="nav-link">Operator Tools</a>
+                        </li>
+                        {% endif %}
+                        {% endif %}     
+
                     </ul>
                 </div>
             </div>

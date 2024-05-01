@@ -16,8 +16,11 @@ customer = Blueprint('customer',__name__)
 # showing month wise money spent for last 6 months. He/she will also have option to specify a range of dates to
 # view total amount of money spent within that range and a bar chart showing month wise money spent within
 # that range. (Bar chart is optional, you can choose to represent the data anyway you like)
+
+### Customer Profile contains all his flight information + spending information
 @customer.route('/customer_profile', methods=['GET', 'POST'])
 def customer_profile():
+
     form = forms.TimeInterval()
 
     if form.validate_on_submit():
@@ -28,15 +31,14 @@ def customer_profile():
         end_date = datetime.date.today()
         start_date = end_date - relativedelta(months=6)
 
-    # Establish database connection
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
-    # Fetch all purchased flights safely
+    #for customer view flights
     cur.execute("SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = %s", (session['email'],))
-    purchased_flights = cur.fetchall()
+    flights = cur.fetchall()
 
-    # Fetch spending data safely
+    #Get spending data
     cur.execute("""
         SELECT YEAR(purchase_date) AS year, MONTH(purchase_date) AS month, SUM(price) AS total_spending
         FROM purchases NATURAL JOIN ticket NATURAL JOIN flight
@@ -46,30 +48,28 @@ def customer_profile():
     customer_spending = cur.fetchall()
     cur.close()
 
-    # Prepare data for the chart
-    date_list = []
-    spending_list = []
+    #Create matplot lib
+    dates = []
+    spents = []
     current_date = start_date
     while current_date <= end_date:
         key = f"{current_date.year}-{current_date.month}"
-        date_list.append(key)
+        dates.append(key)
         # Find the spending for each month, defaulting to 0 if no spending recorded
         total_spending = next((item['total_spending'] for item in customer_spending if f"{item['year']}-{item['month']}" == key), 0)
-        spending_list.append(total_spending)
+        spents.append(total_spending)
         current_date += relativedelta(months=1)
 
-    # Plotting with matplotlib
     fig, ax = plt.subplots()
-    ax.bar(date_list, spending_list, color='blue')
+    ax.bar(dates, spents, color='blue')
     ax.set(title='Monthly Spending', xlabel='Month', ylabel='Spending ($)')
-    ax.set_xticklabels(date_list, rotation=45)
+    ax.set_xticklabels(dates, rotation=45)
     plt.tight_layout()
 
-    # Save plot to a string buffer
+    #Save plot
     img = io.BytesIO()
     plt.savefig(img, format='png')
     img.seek(0)
     plot_url = base64.b64encode(img.getvalue()).decode()
 
-    return render_template('customer_profile.html', purchased_flights=purchased_flights, form=form, plot_url=plot_url)
-
+    return render_template('customer_profile.html', flights=flights, form=form, plot_url=plot_url)

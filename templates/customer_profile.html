@@ -27,6 +27,39 @@
         </div>
     {% endif %}
 
+    <!-- Display purchased flights -->
+    <h2> Purchased Flights </h2>
+    {% if purchased_flights %}
+        <div class="mt-4">
+            <h3>Your Purchased Flights</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in purchased_flights %}
+                        <tr>
+                            <td>{{ flight.flight_num }}</td>
+                            <td>{{ flight.departure_airport }}</td>
+                            <td>{{ flight.arrival_airport }}</td>
+                            <td>{{ flight.departure_time }}</td>
+                            <td>{{ flight.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No purchased flights to display.</p>
+    {% endif %}
+    
+
 </div>
 
 {% endblock content %}

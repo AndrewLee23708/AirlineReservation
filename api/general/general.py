@@ -19,6 +19,7 @@ def flight_status():
 
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
+
     query = """
         SELECT flight_num, departure_time, arrival_time, status
         FROM flight
@@ -26,6 +27,7 @@ def flight_status():
     conditions = []
     parameters = []
 
+    ### We want to build it, since sometimes user dosen't put in that data
     if form.flight_number.data:
         conditions.append("flight_num = %s")
         parameters.append(form.flight_number.data)
@@ -47,8 +49,6 @@ def flight_status():
         flash('No flights match your search criteria.', 'warning')
 
     return render_template('flight_status.html', form=form, search_results=search_results)
-
-
 
 
 
@@ -95,14 +95,12 @@ def view_flights():
 
 
 
-
 ### Purchase ticket for customer and agent
 ### Check if session is customer or agent, if no one logged in, send them to login page.
 ### For this I will use SQL procedure to process if there is enough seats for users
-@general.route('/purchase_ticket/<flight_num>', methods=['GET', 'POST'])
+##### Assumption: We assume one customer can buy multiple seats, theres a Mr.Beast video where he buys the whole plane :)
+@general.route('/purchase_ticket/<int:flight_num>', methods=['GET', 'POST'])
 def purchase_ticket(flight_num):
-    
-    #double check if it's customer or agent
     if 'type' not in session or session['type'] not in ['customer', 'agent']:
         flash('Please log in to continue.', 'warning')
         return redirect(url_for('authentication.login'))
@@ -110,24 +108,77 @@ def purchase_ticket(flight_num):
     form = forms.Purchase()
     
     if form.validate_on_submit():
-        agent_id = form.agent.data
-        customer_email = form.customer.data
+        agent_id = form.agent.data or None  # Handle NULL if no agent is involved
+        customer_email = form.customer.data or session.get('email')  # Use session email if customer is logged in
 
-        # Here you would call your SQL procedure to attempt the ticket purchase
         conn = setup_db()
         cur = conn.cursor(dictionary=True)
-        # Assume you have a stored procedure named 'attempt_purchase' that returns a boolean success value
-        cur.callproc('attempt_purchase', [flight_num, customer_email, agent_id])
-        success, = cur.fetchone().values()
-        cur.close()
 
-        if success:
+        # Step 1: Check for available seats
+        cur.execute("""
+            SELECT f.airline_name, a.seats - COUNT(t.ticket_id) AS available_seats
+            FROM flight f
+            JOIN airplane a ON f.airplane_id = a.airplane_id
+            LEFT JOIN ticket t ON f.flight_num = t.flight_num
+            WHERE f.flight_num = %s
+            GROUP BY f.airline_name, a.seats
+        """, (flight_num,))
+        seat_check = cur.fetchone()
+
+        if seat_check and seat_check['available_seats'] > 0:
+            # Step 2: Insert a new ticket
+            cur.execute("""
+                INSERT INTO ticket (airline_name, flight_num)
+                VALUES (%s, %s)
+            """, (seat_check['airline_name'], flight_num))
+            ticket_id = cur.lastrowid  # Assuming lastrowid retrieves the last inserted ID
+
+            # Step 3: Record the purchase
+            cur.execute("""
+                INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date)
+                VALUES (%s, %s, %s, CURDATE())
+            """, (ticket_id, customer_email, agent_id))
+            conn.commit()  # Commit the transaction to make sure all changes are saved
+
             flash('Ticket purchased successfully!', 'success')
+            cur.close()
             return redirect(url_for('general.view_flights'))
         else:
-            flash('Purchase failed. Please try again.', 'danger')
+            flash('Purchase failed due to no available seats.', 'danger')
+            cur.close()
 
     return render_template('purchase_ticket.html', form=form, flight_num=flight_num)
+
+
+
+# @general.route('/purchase_ticket/<int:flight_num>', methods=['GET', 'POST'])
+# def purchase_ticket(flight_num):
+#     if 'type' not in session or session['type'] not in ['customer', 'agent']:
+#         flash('Please log in to continue.', 'warning')
+#         return redirect(url_for('authentication.login'))
+
+#     form = forms.Purchase()
+    
+#     if form.validate_on_submit():
+#         agent_id = form.agent.data or None  # Handle NULL if no agent is involved
+#         customer_email = form.customer.data or session.get('email')  # Use session email if customer is logged in
+
+#         conn = setup_db()
+#         cur = conn.cursor(dictionary=True)
+        
+#         print("input values: ", flight_num, customer_email, agent_id)
+
+#         # Call the diagnostic procedure
+#         cur.callproc('test_attempt_purchase', [flight_num, 0, 0, 0])
+#         cur.execute("SELECT @debug_airline_name AS airline_name, @debug_seats AS seats, @debug_tickets_sold AS tickets_sold;")
+#         result = cur.fetchone()
+#         cur.close()
+
+#         print(f"Diagnostic results - Airline Rows: {result['airline_name']}, Seat Rows: {result['seats']}, Tickets Sold: {result['tickets_sold']}")
+
+#         # Based on diagnostic results, adjust your main logic or procedure calls
+
+#     return render_template('purchase_ticket.html', form=form, flight_num=flight_num)
 
 
 
@@ -150,14 +201,21 @@ def profile():
 
 ### we don't need this but don't delete, I will implement this directly into the users dashboard
 ### leave this here so you know this functionality will not be implemented.
-# @general.route('view_my_flights')  XXXXXXx
-    #bare bones, but every user can see their flights specific to their needs
-    # if user_type == 'customer':
-    #     return redirect(url_for('customer.customer_profile'))
-    # elif user_type == 'agent':
-    #     return redirect(url_for('agent.agent_profile'))
-    # elif user_type == 'staff':
-    #     return redirect(url_for('staff.staff_profile'))
-    # else:
-    #     return redirect(url_for('general.home'))
+# @general.route('view_my_flights')  
+#     def view_flights():
+#     user_type == session.get('type')
 
+#     #Customer can view their own flights they've booked 
+#     if user_type == 'customer':
+#         return redirect(url_for('customer.customer_profile'))
+
+#     #Agent can see flights they've booked
+#     elif user_type == 'agent':
+#         return redirect(url_for('agent.agent_profile'))
+
+#     #Staff can see flights operated by their airlines within the next 30 days, but they will also be able to 
+#     #Also see all customers of a particular flight
+#     elif user_type == 'staff':
+#         return redirect(url_for('staff.staff_profile'))
+#     else:
+#         return redirect(url_for('general.home'))

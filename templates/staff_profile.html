@@ -1,0 +1,69 @@
+{% extends "base_profile.html" %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Staff Dashboard</h2>
+    <p>Manage and view flights operated by {{ session['airline'] }}.</p>
+    
+    <!-- Flight Search Form -->
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="flight_number">Flight Number:</label>
+                    {{ form.flight_number(class='form-control') }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="start_time">Start Time:</label>
+                    {{ form.start_time(class='form-control') }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group">
+                    <label for="end_time">End Time:</label>
+                    {{ form.end_time(class='form-control') }}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group mt-4">
+                    <button type="submit" class="btn btn-primary">Search Flights</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Displaying Flights -->
+    {% if flights %}
+    <table class="table table-striped mt-3">
+        <thead>
+            <tr>
+                <th>Flight Number</th>
+                <th>Departure Airport</th>
+                <th>Arrival Airport</th>
+                <th>Departure Time</th>
+                <th>Arrival Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for flight in flights %}
+            <tr>
+                <td>{{ flight.flight_num }}</td>
+                <td>{{ flight.departure_airport }}</td>
+                <td>{{ flight.arrival_airport }}</td>
+                <td>{{ flight.departure_time }}</td>
+                <td>{{ flight.arrival_time }}</td>
+                <td>{{ flight.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="mt-3">No flights to display.</p>
+    {% endif %}
+</div>
+
+{% endblock content %}
