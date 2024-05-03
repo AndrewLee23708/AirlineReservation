@@ -13,7 +13,7 @@ staff = Blueprint('staff', __name__)
 @staff.route('/staff_profile', methods=['GET', 'POST'])
 def staff_profile():
     
-    form = forms.AirlineStaffSearchForm()  # Assume a specific form for flight searching
+    form = forms.StaffSearchFlight()  # Assume a specific form for flight searching
 
     # Default values for start_time and end_time
     start_time = datetime.today() - relativedelta(days=30)
@@ -47,10 +47,12 @@ def staff_profile():
     # Render the template with the search form and the flight results
     return render_template('staff_profile.html', form=form, flights=flights)                                 ###FIX THIS, Not dispalying if only flight number is searched
 
+# ### Admin only tool box, contains all functionalities for admin
+# Includes 5 functionalities
 @staff.route('/staff_create_flight', methods=['GET', 'POST'])
 def staff_create_flight():
 
-    form = forms.CreateFlightForm()
+    form = forms.CreateFlight()
     if form.validate_on_submit():
         try:
             conn = setup_db()
@@ -63,7 +65,6 @@ def staff_create_flight():
             conn.commit()
             flash('Flight created successfully!', 'success')
         except Exception as e:
-            conn.rollback()
             flash(f'Failed to create flight. Error: {str(e)}', 'danger')
         finally:
             cur.close()
@@ -73,7 +74,7 @@ def staff_create_flight():
 @staff.route('/staff_add_airplane', methods=['GET', 'POST'])
 def staff_add_airplane():
 
-    form = forms.AddAirplaneForm()
+    form = forms.AddAirplane()
     if form.validate_on_submit():
         try:
             conn = setup_db()
@@ -83,7 +84,6 @@ def staff_add_airplane():
             conn.commit()
             flash('Airplane added successfully!', 'success')
         except Exception as e:
-            conn.rollback()
             flash(f'Failed to add airplane. Error: {str(e)}', 'danger')
         finally:
             cur.close()
@@ -92,7 +92,7 @@ def staff_add_airplane():
 @staff.route('/staff_add_airport', methods=['GET', 'POST'])
 def staff_add_airport():
 
-    form = forms.AddAirportForm()
+    form = forms.AddAirport()
     if form.validate_on_submit():
         try:
             conn = setup_db()
@@ -102,7 +102,6 @@ def staff_add_airport():
             conn.commit()
             flash('Airport added successfully!', 'success')
         except Exception as e:
-            conn.rollback()
             flash(f'Failed to add airport. Error: {str(e)}', 'danger')
         finally:
             cur.close()
@@ -111,7 +110,7 @@ def staff_add_airport():
 @staff.route('/staff_grant_permission', methods=['GET', 'POST'])
 def staff_grant_permission():
 
-    form = forms.GrantNewPermissionForm()
+    form = forms.GrantPermissions()
     if form.validate_on_submit():
         try:
             conn = setup_db()
@@ -121,16 +120,16 @@ def staff_grant_permission():
             conn.commit()
             flash('Permission granted successfully!', 'success')
         except Exception as e:
-            conn.rollback()
             flash(f'Failed to grant permission. Error: {str(e)}', 'danger')
         finally:
             cur.close()
     return render_template('staff_grant_permission.html', form=form)
 
+
 @staff.route('/staff_add_booking_agent', methods=['GET', 'POST'])
 def staff_add_booking_agent():
 
-    form = forms.AddBookingAgentToAirlineForm()
+    form = forms.AddAgent()
     if form.validate_on_submit():
         try:
             conn = setup_db()
@@ -140,16 +139,10 @@ def staff_add_booking_agent():
             conn.commit()
             flash('Booking agent added successfully to the airline!', 'success')
         except Exception as e:
-            conn.rollback()
             flash(f'Failed to add booking agent. Error: {str(e)}', 'danger')
         finally:
             cur.close()
     return render_template('staff_add_booking_agent.html', form=form)
-
-
-
-
-# ### Admin only tool box, contains all functionalities for admin
 
 # @staff.route('/create_flight', methods=['GET', 'POST'])
 # def create_flight():

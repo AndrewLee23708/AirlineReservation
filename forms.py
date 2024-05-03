@@ -133,7 +133,7 @@ class Purchase(FlaskForm):
 ################
 
 #Airline search
-class AirlineStaffSearchForm(FlaskForm):
+class StaffSearchFlight(FlaskForm):
     flight_number = StringField('Flight_number', validators=[])
     start_time = DateField('Start Time', validators=[])
     end_time = DateField('End Time', validators=[])
@@ -143,11 +143,11 @@ class AirlineStaffSearchForm(FlaskForm):
     submit = SubmitField('Search Flight')
 
 ### Admin forms
-class CreateFlightForm(FlaskForm):
+class CreateFlight(FlaskForm):
     flight_num = IntegerField('Flight Number', validators=[DataRequired()])
-    departure_airport = StringField('Departure Airport', validators=[DataRequired(), Length(min=1, max=50)])
+    departure_airport = StringField('Departure Airport', validators=[DataRequired(), Length(max=20)])
     departure_time = DateTimeField('Departure Time', validators=[DataRequired()])
-    arrival_airport = StringField('Arrival Airport', validators=[DataRequired(), Length(min=1, max=50)])
+    arrival_airport = StringField('Arrival Airport', validators=[DataRequired(), Length(max=20)])
     arrival_time = DateTimeField('Arrival Time', validators=[DataRequired()])
     price = IntegerField('Price', validators=[DataRequired()])
     status = SelectField('Status', choices=['upcoming', 'in_progress', 'delayed'])
@@ -156,7 +156,7 @@ class CreateFlightForm(FlaskForm):
     submit = SubmitField('Create')
 
 
-class AddAirplaneForm(FlaskForm):
+class AddAirplane(FlaskForm):
     identifier = StringField('Identifier')
     airplane_id = IntegerField('Airplane ID', validators=[DataRequired()])
     seats = IntegerField('Seats', validators=[DataRequired()])
@@ -164,15 +164,15 @@ class AddAirplaneForm(FlaskForm):
     submit = SubmitField('Add')
 
 
-class AddAirportForm(FlaskForm):
+class AddAirport(FlaskForm):
     identifier = StringField('Identifier')
-    airport_name = StringField('Airport Name', validators=[DataRequired(), Length(min=1, max=50)])
-    airport_city = StringField('Airport City', validators=[DataRequired(), Length(min=1, max=50)])
+    airport_name = StringField('Airport Name', validators=[DataRequired(), Length(max=20)])
+    airport_city = StringField('Airport City', validators=[DataRequired(), Length(max=20)])
 
     submit = SubmitField('Add')
 
 
-class GrantNewPermissionForm(FlaskForm):
+class GrantPermissions(FlaskForm):
     identifier = StringField('Identifier')
     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
     permission = SelectField('Permission', choices=['Operator', 'Admin'])
@@ -180,7 +180,7 @@ class GrantNewPermissionForm(FlaskForm):
     submit = SubmitField('Grant Permission')
 
 
-class AddBookingAgentToAirlineForm(FlaskForm):
+class AddAgent(FlaskForm):
     identifier = StringField('Identifier')
     email = StringField('Email', validators=[DataRequired(), Email(), Length(min=1, max=50)])
 
@@ -188,7 +188,7 @@ class AddBookingAgentToAirlineForm(FlaskForm):
 
 
 ### Operator form
-class ChangeFlightStatusForm(FlaskForm):
+class ChangeFlightStatus(FlaskForm):
     identifier = StringField('Identifier')
     flight_num = IntegerField('Flight Number', validators=[DataRequired()])
     status = SelectField('New Status', choices=['', 'upcoming', 'in_progress', 'delayed'])
