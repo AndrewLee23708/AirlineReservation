@@ -1,5 +1,6 @@
 {% extends "base_profile.html" %}
 
+
 {% block content %}
 <div class="container mt-5">
     <h2>Admin Dashboard</h2>
@@ -11,45 +12,61 @@
         </div>
         <div class="card-body">
             <form method="POST">
-                {{ create_flight_form.hidden_tag() }}
+                {{ form.hidden_tag() }}
                 <div class="form-group">
-                    {{ create_flight_form.flight_num.label }}
-                    {{ create_flight_form.flight_num(class='form-control') }}
+                    {{ form.flight_num.label }}
+                    {{ form.flight_num(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.departure_airport.label }}
-                    {{ create_flight_form.departure_airport(class='form-control') }}
+                    {{ form.departure_airport.label }}
+                    {{ form.departure_airport(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.departure_time.label }}
-                    {{ create_flight_form.departure_time(class='form-control') }}
+                    {{ form.departure_time.label }}
+                    {{ form.departure_time(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.arrival_airport.label }}
-                    {{ create_flight_form.arrival_airport(class='form-control') }}
+                    {{ form.arrival_airport.label }}
+                    {{ form.arrival_airport(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.arrival_time.label }}
-                    {{ create_flight_form.arrival_time(class='form-control') }}
+                    {{ form.arrival_time.label }}
+                    {{ form.arrival_time(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.price.label }}
-                    {{ create_flight_form.price(class='form-control') }}
+                    {{ form.price.label }}
+                    {{ form.price(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.status.label }}
-                    {{ create_flight_form.status(class='form-control') }}
+                    {{ form.status.label }}
+                    {{ form.status(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.airplane_id.label }}
-                    {{ create_flight_form.airplane_id(class='form-control') }}
+                    {{ form.airplane_id.label }}
+                    {{ form.airplane_id(class='form-control') }}
                 </div>
-                <button type="submit" class="btn btn-primary">{{ create_flight_form.submit.label }}</button>
+                <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
             </form>
         </div>
     </div>
 
    
-
 </div>
+
+<!-- Data validation for time as well -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+flatpickr("#departure_time", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+});
+flatpickr("#arrival_time", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+});
+</script>
+
 {% endblock content %}

@@ -11,16 +11,16 @@
         </div>
         <div class="card-body">
             <form method="POST">
-                {{ add_airplane_form.hidden_tag() }}
+                {{ form.hidden_tag() }}
                 <div class="form-group">
-                    {{ add_airplane_form.airplane_id.label }}
-                    {{ add_airplane_form.airplane_id(class='form-control') }}
+                    {{ form.airplane_id.label }}
+                    {{ form.airplane_id(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ add_airplane_form.seats.label }}
-                    {{ add_airplane_form.seats(class='form-control') }}
+                    {{ form.seats.label }}
+                    {{ form.seats(class='form-control') }}
                 </div>
-                <button type="submit" class="btn btn-primary">{{ add_airplane_form.submit.label }}</button>
+                <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
             </form>
         </div>
     </div>
