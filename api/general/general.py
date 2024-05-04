@@ -20,6 +20,7 @@ def flight_status():
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
+    #Append query if details inputted:
     query = """
         SELECT flight_num, departure_time, arrival_time, status
         FROM flight
@@ -105,16 +106,33 @@ def purchase_ticket(flight_num):
         flash('Please log in to continue.', 'warning')
         return redirect(url_for('authentication.login'))
 
+    conn = setup_db()
+    cur = conn.cursor(dictionary=True)
+
+    # Fetch flight details
+    cur.execute("""
+    SELECT airline_name, flight_num, departure_airport, departure_time,
+    arrival_airport, arrival_time, price
+    FROM flight
+    WHERE flight_num = %s""", (flight_num,))
+    flight = cur.fetchone()
+
     form = forms.Purchase()
     
     if form.validate_on_submit():
-        agent_id = form.agent.data or None  # Handle NULL if no agent is involved
-        customer_email = form.customer.data or session.get('email')  # Use session email if customer is logged in
+        agent_id = form.agent.data if 'agent' in session['type'] else None
+        customer_email = form.customer.data if 'agent' in session['type'] else session.get('email')
 
-        conn = setup_db()
-        cur = conn.cursor(dictionary=True)
+        # Verify customer exists if an agent is booking
+        if 'agent' in session['type']:
+            cur.execute("SELECT email FROM customer WHERE email = %s", (customer_email,))
+            customer_exist = cur.fetchone()
+            if not customer_exist:
+                flash('Customer email does not exist.', 'danger')
+                cur.close()
+                return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num)
 
-        # Step 1: Check for available seats
+        # Check for available seats
         cur.execute("""
             SELECT f.airline_name, a.seats - COUNT(t.ticket_id) AS available_seats
             FROM flight f
@@ -126,28 +144,36 @@ def purchase_ticket(flight_num):
         seat_check = cur.fetchone()
 
         if seat_check and seat_check['available_seats'] > 0:
-            # Step 2: Insert a new ticket
+            # Insert a ticket
             cur.execute("""
                 INSERT INTO ticket (airline_name, flight_num)
                 VALUES (%s, %s)
             """, (seat_check['airline_name'], flight_num))
             ticket_id = cur.lastrowid  # Assuming lastrowid retrieves the last inserted ID
 
-            # Step 3: Record the purchase
+            # Record the purchase
             cur.execute("""
                 INSERT INTO purchases (ticket_id, customer_email, booking_agent_id, purchase_date)
                 VALUES (%s, %s, %s, CURDATE())
             """, (ticket_id, customer_email, agent_id))
-            conn.commit()  # Commit the transaction to make sure all changes are saved
+            conn.commit()  # Commit
 
             flash('Ticket purchased successfully!', 'success')
             cur.close()
             return redirect(url_for('general.view_flights'))
+        
         else:
             flash('Purchase failed due to no available seats.', 'danger')
-            cur.close()
+        
+        cur.close()
 
-    return render_template('purchase_ticket.html', form=form, flight_num=flight_num)
+    if not flight:
+        flash('Flight not found.', 'danger')
+        return redirect(url_for('general.view_flights'))
+
+    return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num)
+
+
 
 
 

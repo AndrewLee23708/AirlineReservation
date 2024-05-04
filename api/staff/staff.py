@@ -68,7 +68,7 @@ def staff_profile():
 
 # ### Admin only tool box, contains all functionalities for admin
 # Includes 5 functionalities
-# Create flight, insert one-by-one
+# Create flight, insert one-by-one not all onto flight table 
 @staff.route('/staff_create_flight', methods=['GET', 'POST'])
 def staff_create_flight():
 
@@ -77,7 +77,7 @@ def staff_create_flight():
         conn = setup_db()
         cur = conn.cursor(dictionary=True)
 
-        # Check if the flight number already exists
+        # Check for duplicate flight number 
         cur.execute("SELECT * FROM flight WHERE flight_num = %s AND airline_name = %s", (form.flight_num.data, session['airline']))
         if cur.fetchone():
             flash('The flight already exists!', 'danger')
@@ -102,6 +102,7 @@ def staff_create_flight():
             flash('Flight created successfully!', 'success')
         except Exception as e:
             flash(f'Failed to create flight. Error: {str(e)}', 'danger')
+
         finally:
             cur.close()
     return render_template('staff_create_flight.html', form=form)
@@ -135,7 +136,7 @@ def staff_add_airplane():
 
     return render_template('staff_add_airplane.html', form=form)
 
-
+#Works
 @staff.route('/staff_add_airport', methods=['GET', 'POST'])
 def staff_add_airport():
     form = forms.AddAirport()
@@ -164,6 +165,7 @@ def staff_add_airport():
     return render_template('staff_add_airport.html', form=form)
 
 ### Make sure to add constraint that staff has to be in the same airline as staff being changed.
+#Works
 @staff.route('/staff_grant_permission', methods=['GET', 'POST'])
 def staff_grant_permission():
     form = forms.GrantPermissions()
@@ -269,7 +271,7 @@ def staff_operator():
                 conn.commit()
                 flash('Flight status updated successfully!', 'success')
             else:
-                # Not under same airline
+                #Not under same airline
                 flash('Flight number does not exist in your airline.', 'danger')
                 
         except Exception as e:
@@ -295,13 +297,13 @@ def view_booking_agents():
         interval = "1 MONTH" if period == 'month' else "1 YEAR"
         column = "COUNT(*)" if metric == 'tickets' else "SUM(flight.price)"  # Ensure price is from the flight table
         query = f"""
-            SELECT booking_agent_id, {column} AS {metric_name}
+            SELECT purchases.booking_agent_id, {column} AS {metric_name}
             FROM purchases
             JOIN ticket ON purchases.ticket_id = ticket.ticket_id
             JOIN flight ON ticket.flight_num = flight.flight_num  # Join flight table to access the price
-            WHERE airline_name = %s AND purchase_date >= DATE_SUB(CURDATE(), INTERVAL {interval})
-              AND booking_agent_id IS NOT NULL
-            GROUP BY booking_agent_id
+            WHERE flight.airline_name = %s AND purchases.purchase_date >= DATE_SUB(CURDATE(), INTERVAL {interval})
+              AND purchases.booking_agent_id IS NOT NULL
+            GROUP BY purchases.booking_agent_id
             ORDER BY {metric_name} DESC
             LIMIT 5
         """
@@ -314,10 +316,10 @@ def view_booking_agents():
 
     # Get all booking agents in this airline
     cur.execute("""
-        SELECT booking_agent_id, email
+        SELECT booking_agent.email, booking_agent.booking_agent_id
         FROM booking_agent
-        JOIN booking_agent_work_for ON booking_agent.booking_agent_id = booking_agent_work_for.booking_agent_id
-        WHERE airline_name = %s
+        JOIN booking_agent_work_for ON booking_agent.email = booking_agent_work_for.email
+        WHERE booking_agent_work_for.airline_name = %s
     """, (session['airline'],))
     booking_agents = cur.fetchall()
 
@@ -361,6 +363,8 @@ def view_frequent_customers():
     return render_template('staff_view_customers.html', customers=customers)
 
 
+
+
 @staff.route('/view_customer_tickets/<customer_email>', methods=['GET'])
 def view_customer_tickets(customer_email):
     conn = setup_db()
@@ -376,12 +380,16 @@ def view_customer_tickets(customer_email):
     cur.execute(query, (customer_email, session['airline']))
     tickets = cur.fetchall()
 
-    
+    ### Need to format date object into strings
+    for ticket in tickets:
+        ticket['departure_time'] = ticket['departure_time'].strftime('%Y-%m-%d %H:%M')
+        ticket['arrival_time'] = ticket['arrival_time'].strftime('%Y-%m-%d %H:%M')
 
     cur.close()
     conn.close()
 
-    return render_template('staff_view_customer_ticket.html', tickets=tickets, customer_email=customer_email)
+    return render_template('staff_view_customer_ticket.html', tickets=tickets, customer_email=customer_email, airline = session['airline'])
+
 
 
 

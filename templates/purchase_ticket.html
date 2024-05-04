@@ -1,19 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Purchase Ticket for Flight {{ flight_num }}</h2>
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            <label for="agent">Agent ID:</label>
-            {{ form.agent(class='form-control') }}
+<div class="container mt-4">
+    <h2 class="mb-4">Purchase Ticket for Flight {{ flight_num }}</h2>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">{{ flight.airline_name }} - Flight {{ flight.flight_num }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{ flight.departure_airport }} to {{ flight.arrival_airport }}</h6>
+            <p class="card-text">
+                Departure Time: {{ flight.departure_time }}<br>
+                Arrival Time: {{ flight.arrival_time }}<br>
+                Price: ${{ "%.2f"|format(flight.price) }}
+            </p>
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                {% if session['type'] == 'agent' %}
+                    <div class="form-group">
+                        <label for="customer">Customer Email:</label>
+                        {{ form.customer(class='form-control') }}
+                        {% for error in form.customer.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-primary">Purchase Ticket</button>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="customer">Customer Email:</label>
-            {{ form.customer(class='form-control') }}
-        </div>
-        <button type="submit" class="btn btn-primary">Purchase</button>
-    </form>
+    </div>
 </div>
+
 {% endblock %}

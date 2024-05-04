@@ -5,92 +5,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NYU Flights{% endblock %}</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet"> <!-- Changed font to Nunito -->
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f4f4f4; /* Light grey background */
+            font-family: 'Nunito', sans-serif;
+            background-color: #f4f4f4;
         }
         .navbar {
-            background-color: #57068c; /* NYU purple */
-            padding: 0.5rem 1rem; /* Reduced padding for a slimmer navbar */
+            background-color: #57068c;
+            padding: 1rem 2rem;
         }
         .navbar-brand, .nav-link, .sidebar a {
             color: white !important;
         }
-        .sidebar {
-            padding: 1.5rem;
-            border-radius: 0.5rem; /* Rounded corners */
-            background-color: #fff; /* White background */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
-            margin-top: 1rem; /* Space below navbar */
-        }
-        .main-content {
-            background-color: #fff;
-            border-radius: 0.5rem; /* Rounded corners */
-            margin-top: 1rem; /* Space below navbar */
-            padding: 2rem; /* Padding inside content area */
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
+        .navbar-nav, .navbar-right {
+            flex: 1;  /* Each takes as much space as needed */
+            display: flex;
+            align-items: center;
         }
         .navbar-nav {
-            width: 100%;
-            justify-content: flex-end;
+            justify-content: center;
+        }
+        .navbar-right {
+            justify-content: flex-end; /* Align right-side elements to the right */
+        }
+        .nav-link:hover {
+            background-color: #311b92; /* Specific hover effect */
+            border-radius: 5px; /* Rounded corners for hover effect */
+            padding: 5px; /* Padding to increase clickable area */
         }
         .navbar-brand {
-            flex-grow: 1;
-            font-weight: 700; /* Roboto bold for brand */
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
         }
-        .nav-link.active {
-            background-color: #311b92; /* A darker shade of purple for active tab */
-        }
-        .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-            color: white;
-            background-color: #311b92;
-        }
-        .nav-tabs .nav-link {
-            border: none;
-            color: white;
-            background-color: transparent;
-        }
-        .nav-tabs .nav-link:hover {
-            border: none;
-            background-color: #311b92;
-        }
-        .alert {
-            margin-top: 1em; /* Space between navbar and alert */
+        .nav-item {
+            margin: 0 10px; /* Proper spacing between navigation links */
         }
     </style>
-</head>
-<body>
-    <nav class="navbar navbar-expand-lg">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <a class="navbar-brand" href="{{ url_for('general.home') }}">
-            <img src="{{ url_for('static', filename='logo.png') }}" width="30" height="30" alt="NYU Logo"> NYU Flights
+            <img src="{{ url_for('static', filename='logo.png') }}" width="40" height="40" alt="NYU Logo"> NYU Flights
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" href="{{ url_for('general.view_flights') }}">View/Book Flights</a>
-                <a class="nav-item nav-link" href="{{ url_for('general.flight_status') }}">Flight Status</a>
-                <a class="nav-item nav-link" href="{{ url_for('general.profile') }}">Profile</a>
-                <!-- User greeting based on type -->
-                {% if 'type' in session %}
-                    {% if session['type'] == 'customer' %}
-                        <a class="nav-item nav-link disabled">Customer: {{ session['email'] }}</a>
-                    {% elif session['type'] == 'agent' %}
-                        <a class="nav-item nav-link disabled">Agent: {{ session['email'] }}</a>
-                    {% elif session['type'] == 'staff' %}
-                        <a class="nav-item nav-link disabled">Staff: {{ session['username'] }}</a>
-                    {% endif %}
-                    <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
-                {% else %}
-                    <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>
-                {% endif %}
-            </div>
+        <div class="navbar-nav">
+            <a class="nav-item nav-link" href="{{ url_for('general.view_flights') }}">View/Book Flights</a>
+            <a class="nav-item nav-link" href="{{ url_for('general.flight_status') }}">Flight Status</a>
+            <a class="nav-item nav-link" href="{{ url_for('general.profile') }}">Profile</a>
+        </div>
+        <div class="navbar-right">
+            {% if 'type' in session %}
+                <a class="nav-item nav-link disabled">{{ session['type'] | capitalize }}: {{ session['email'] or session['username'] }}</a>
+                <a class="nav-item nav-link" href="{{ url_for('authentication.logout') }}">Logout</a>
+            {% else %}
+                <a class="nav-item nav-link" href="{{ url_for('authentication.login') }}">Login / Signup</a>
+            {% endif %}
         </div>
     </nav>
-
 
     <!-- Flash messages area -->
     <div class="container">
@@ -107,7 +78,6 @@
         {% endif %}
         {% endwith %}
     </div>
-
 
     <div class="container">
         {% block content %}{% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base_profile.html" %}
 {% block content %}
 <div class="container">
-    <h2>Tickets Purchased by {{ customer_email }}</h2>
+    <h2> {{airline}} Tickets Purchased by {{ customer_email }}</h2>
     <table class="table">
         <thead>
             <tr>
@@ -19,8 +19,8 @@
                 <td>{{ ticket.flight_num }}</td>
                 <td>{{ ticket.departure_airport }}</td>
                 <td>{{ ticket.arrival_airport }}</td>
-                <td>{{ ticket.departure_time | date("Y-m-d H:i") }}</td>
-                <td>{{ ticket.arrival_time | date("Y-m-d H:i") }}</td>
+                <td>{{ ticket.departure_time  }}</td>
+                <td>{{ ticket.arrival_time  }}</td>
                 <td>${{ "%.2f"|format(ticket.price) }}</td>
             </tr>
             {% else %}

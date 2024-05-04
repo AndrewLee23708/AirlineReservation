@@ -3,61 +3,82 @@
 
 <div class="container">
     <h2>Booking Agents</h2>
-    <h3>Top Agents by Tickets Sold Last Month</h3>
-    <table>
-        <tr>
-            <th>Agent ID</th>
-            <th>Tickets Sold</th>
-        </tr>
-        {% for agent in top_5_agents_past_month %}
-        <tr>
-            <td>{{ agent.booking_agent_id }}</td>
-            <td>{{ agent.num_tickets }}</td>
-        </tr>
-        {% endfor %}
-    </table>
 
-    <h3>Top Agents by Tickets Sold Last Year</h3>
-    <table>
-        <tr>
-            <th>Agent ID</th>
-            <th>Tickets Sold</th>
-        </tr>
-        {% for agent in top_5_agents_past_year %}
-        <tr>
-            <td>{{ agent.booking_agent_id }}</td>
-            <td>{{ agent.num_tickets }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="agentTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="all-agents-tab" data-toggle="tab" href="#all-agents" role="tab" aria-controls="all-agents" aria-selected="true">All Agents</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="sold-month-tab" data-toggle="tab" href="#sold-month" role="tab" aria-controls="sold-month" aria-selected="false">Tickets Sold Last Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="sold-year-tab" data-toggle="tab" href="#sold-year" role="tab" aria-controls="sold-year" aria-selected="false">Tickets Sold Last Year</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="commissions-year-tab" data-toggle="tab" href="#commissions-year" role="tab" aria-controls="commissions-year" aria-selected="false">Commissions Last Year</a>
+        </li>
+    </ul>
 
-    <h3>Top Agents by Commission Last Year</h3>
-    <table>
-        <tr>
-            <th>Agent ID</th>
-            <th>Commission</th>
-        </tr>
-        {% for agent in top_5_agents_commission_past_year %}
-        <tr>
-            <td>{{ agent.booking_agent_id }}</td>
-            <td>${{ agent.commission }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-
-    <h3>All Agents in Airline</h3>
-    <table>
-        <tr>
-            <th>Agent ID</th>
-            <th>Email</th>
-        </tr>
-        {% for agent in booking_agents %}
-        <tr>
-            <td>{{ agent.booking_agent_id }}</td>
-            <td>{{ agent.email }}</td>
-        </tr>
-        {% endfor %}
-    </table>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="all-agents" role="tabpanel" aria-labelledby="all-agents-tab">
+            <table class="table">
+                <tr>
+                    <th>Agent ID</th>
+                    <th>Email</th>
+                </tr>
+                {% for agent in booking_agents %}
+                <tr>
+                    <td>{{ agent.booking_agent_id }}</td>
+                    <td>{{ agent.email }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="tab-pane fade" id="sold-month" role="tabpanel" aria-labelledby="sold-month-tab">
+            <table class="table">
+                <tr>
+                    <th>Agent ID</th>
+                    <th>Tickets Sold</th>
+                </tr>
+                {% for agent in top_5_agents_past_month %}
+                <tr>
+                    <td>{{ agent.booking_agent_id }}</td>
+                    <td>{{ agent.num_tickets }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="tab-pane fade" id="sold-year" role="tabpanel" aria-labelledby="sold-year-tab">
+            <table class="table">
+                <tr>
+                    <th>Agent ID</th>
+                    <th>Tickets Sold</th>
+                </tr>
+                {% for agent in top_5_agents_past_year %}
+                <tr>
+                    <td>{{ agent.booking_agent_id }}</td>
+                    <td>{{ agent.num_tickets }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="tab-pane fade" id="commissions-year" role="tabpanel" aria-labelledby="commissions-year-tab">
+            <table class="table">
+                <tr>
+                    <th>Agent ID</th>
+                    <th>Commission</th>
+                </tr>
+                {% for agent in top_5_agents_commission_past_year %}
+                <tr>
+                    <td>{{ agent.booking_agent_id }}</td>
+                    <td>${{ agent.commission }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
