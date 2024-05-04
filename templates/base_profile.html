@@ -99,16 +99,18 @@
                                 </ul>
                             </div>
                         </li>
+                        
                         {% elif session['type'] == 'agent' %}
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#agentLinks" role="button" aria-expanded="false" aria-controls="agentLinks">Agent Links</a>
                             <div class="collapse" id="agentLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li><a href="#" class="nav-link">Link 1</a></li>
-                                    <li><a href="#" the nav-link">Link 2</a></li>
+                                    <li><a href="{{ url_for('agent.view_commissions') }}" class="nav-link">View Commissions</a></li>
+                                    <li><a href="{{ url_for('agent.view_top_customers') }}" class="nav-link">View Top Customers</a></li>
                                 </ul>
                             </div>
                         </li>
+
                         <!-- Staff information part -->
                         {% elif session['type'] == 'staff' %}
                         <li class="nav-item">

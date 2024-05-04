@@ -1,4 +1,63 @@
 {% extends "base_profile.html" %}
 {% block content %}
 
+<div class="container">
+    <h2>Booking Agents</h2>
+    <h3>Top Agents by Tickets Sold Last Month</h3>
+    <table>
+        <tr>
+            <th>Agent ID</th>
+            <th>Tickets Sold</th>
+        </tr>
+        {% for agent in top_5_agents_past_month %}
+        <tr>
+            <td>{{ agent.booking_agent_id }}</td>
+            <td>{{ agent.num_tickets }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Top Agents by Tickets Sold Last Year</h3>
+    <table>
+        <tr>
+            <th>Agent ID</th>
+            <th>Tickets Sold</th>
+        </tr>
+        {% for agent in top_5_agents_past_year %}
+        <tr>
+            <td>{{ agent.booking_agent_id }}</td>
+            <td>{{ agent.num_tickets }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Top Agents by Commission Last Year</h3>
+    <table>
+        <tr>
+            <th>Agent ID</th>
+            <th>Commission</th>
+        </tr>
+        {% for agent in top_5_agents_commission_past_year %}
+        <tr>
+            <td>{{ agent.booking_agent_id }}</td>
+            <td>${{ agent.commission }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>All Agents in Airline</h3>
+    <table>
+        <tr>
+            <th>Agent ID</th>
+            <th>Email</th>
+        </tr>
+        {% for agent in booking_agents %}
+        <tr>
+            <td>{{ agent.booking_agent_id }}</td>
+            <td>{{ agent.email }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
 {% endblock %}
