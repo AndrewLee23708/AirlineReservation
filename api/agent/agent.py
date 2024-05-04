@@ -143,7 +143,7 @@ def view_commissions():
     cur.close()
 
     # avg commission
-    if commissions_sum = 0:
+    if commissions_sum == 0:
         print("No commissions")
     else:
         commissions_avg = float(sum_commissions)/float(num_tickets)
