@@ -11,16 +11,16 @@
         </div>
         <div class="card-body">
             <form method="POST">
-                {{ grant_permission_form.hidden_tag() }}
+                {{ form.hidden_tag() }}
                 <div class="form-group">
-                    {{ grant_permission_form.email.label }}
-                    {{ grant_permission_form.email(class='form-control') }}
+                    {{ form.username.label }}
+                    {{ form.username(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ grant_permission_form.permission.label }}
-                    {{ grant_permission_form.permission(class='form-control') }}
+                    {{ form.permission.label }}
+                    {{ form.permission(class='form-control') }}
                 </div>
-                <button type="submit" class="btn btn-primary">{{ grant_permission_form.submit.label }}</button>
+                <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
             </form>
         </div>
     </div>

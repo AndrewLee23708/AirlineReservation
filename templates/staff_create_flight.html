@@ -1,5 +1,6 @@
 {% extends "base_profile.html" %}
 
+
 {% block content %}
 <div class="container mt-5">
     <h2>Admin Dashboard</h2>
@@ -11,123 +12,61 @@
         </div>
         <div class="card-body">
             <form method="POST">
-                {{ create_flight_form.hidden_tag() }}
+                {{ form.hidden_tag() }}
                 <div class="form-group">
-                    {{ create_flight_form.flight_num.label }}
-                    {{ create_flight_form.flight_num(class='form-control') }}
+                    {{ form.flight_num.label }}
+                    {{ form.flight_num(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.departure_airport.label }}
-                    {{ create_flight_form.departure_airport(class='form-control') }}
+                    {{ form.departure_airport.label }}
+                    {{ form.departure_airport(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.departure_time.label }}
-                    {{ create_flight_form.departure_time(class='form-control') }}
+                    {{ form.departure_time.label }}
+                    {{ form.departure_time(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.arrival_airport.label }}
-                    {{ create_flight_form.arrival_airport(class='form-control') }}
+                    {{ form.arrival_airport.label }}
+                    {{ form.arrival_airport(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.arrival_time.label }}
-                    {{ create_flight_form.arrival_time(class='form-control') }}
+                    {{ form.arrival_time.label }}
+                    {{ form.arrival_time(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.price.label }}
-                    {{ create_flight_form.price(class='form-control') }}
+                    {{ form.price.label }}
+                    {{ form.price(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.status.label }}
-                    {{ create_flight_form.status(class='form-control') }}
+                    {{ form.status.label }}
+                    {{ form.status(class='form-control') }}
                 </div>
                 <div class="form-group">
-                    {{ create_flight_form.airplane_id.label }}
-                    {{ create_flight_form.airplane_id(class='form-control') }}
+                    {{ form.airplane_id.label }}
+                    {{ form.airplane_id(class='form-control') }}
                 </div>
-                <button type="submit" class="btn btn-primary">{{ create_flight_form.submit.label }}</button>
+                <button type="submit" class="btn btn-primary">{{ form.submit.label }}</button>
             </form>
         </div>
     </div>
 
-    <!-- Add Airplane Form -->
-    <div class="card my-3">
-        <div class="card-header">
-            Add a New Airplane
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {{ add_airplane_form.hidden_tag() }}
-                <div class="form-group">
-                    {{ add_airplane_form.airplane_id.label }}
-                    {{ add_airplane_form.airplane_id(class='form-control') }}
-                </div>
-                <div class="form-group">
-                    {{ add_airplane_form.seats.label }}
-                    {{ add_airplane_form.seats(class='form-control') }}
-                </div>
-                <button type="submit" class="btn btn-primary">{{ add_airplane_form.submit.label }}</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Airport Form -->
-    <div class="card my-3">
-        <div class="card-header">
-            Add a New Airport
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {{ add_airport_form.hidden_tag() }}
-                <div class="form-group">
-                    {{ add_airport_form.airport_name.label }}
-                    {{ add_airport_form.airport_name(class='form-control') }}
-                </div>
-                <div class="form-group">
-                    {{ add_airport_form.airport_city.label }}
-                    {{ add_airport_form.airport_city(class='form-control') }}
-                </div>
-                <button type="submit" class="btn btn-primary">{{ add_airport_form.submit.label }}</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Grant Permission Form -->
-    <div class="card my-3">
-        <div class="card-header">
-            Grant New Permission
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {{ grant_permission_form.hidden_tag() }}
-                <div class="form-group">
-                    {{ grant_permission_form.email.label }}
-                    {{ grant_permission_form.email(class='form-control') }}
-                </div>
-                <div class="form-group">
-                    {{ grant_permission_form.permission.label }}
-                    {{ grant_permission_form.permission(class='form-control') }}
-                </div>
-                <button type="submit" class="btn btn-primary">{{ grant_permission_form.submit.label }}</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Add Booking Agent Form -->
-    <div class="card my-3">
-        <div class="card-header">
-            Add Booking Agent to Airline
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                {{ add_booking_agent_form.hidden_tag() }}
-                <div class="form-group">
-                    {{ add_booking_agent_form.email.label }}
-                    {{ add_booking_agent_form.email(class='form-control') }}
-                </div>
-                <button type="submit" class="btn btn-primary">{{ add_booking_agent_form.submit.label }}</button>
-            </form>
-        </div>
-    </div>
-
+   
 </div>
+
+<!-- Data validation for time as well -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+flatpickr("#departure_time", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+});
+flatpickr("#arrival_time", {
+    enableTime: true,
+    dateFormat: "Y-m-d H:i",
+});
+</script>
+
 {% endblock content %}

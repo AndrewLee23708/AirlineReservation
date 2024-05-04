@@ -109,16 +109,21 @@
                                 </ul>
                             </div>
                         </li>
+                        <!-- Staff information part -->
                         {% elif session['type'] == 'staff' %}
                         <li class="nav-item">
                             <a class="nav-link collapsed" data-toggle="collapse" href="#staffLinks" role="button" aria-expanded="false" aria-controls="staffLinks">Staff Links</a>
                             <div class="collapse" id="staffLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li><a href="#" class="nav-link">Link 1</a></li>
-                                    <li><a href="#" class="nav-link">Link 2</a></li>
+                                    <li><a href="{{ url_for('staff.view_booking_agents') }}" class="nav-link">View Booking Agents</a></li>
+                                    <li><a href="{{ url_for('staff.view_frequent_customers') }}" class="nav-link">View Frequent Customers</a></li>
+                                    <li><a href="{{ url_for('staff.view_reports') }}" class="nav-link">View Reports</a></li>
+                                    <li><a href="{{ url_for('staff.compare_revenue') }}" class="nav-link">Compare Revenue</a></li>
+                                    <li><a href="{{ url_for('staff.view_top_destinations') }}" class="nav-link">View Top Destinations</a></li>
                                 </ul>
                             </div>
                         </li>
+
                         <!--  Permissions is a list of permissions, so don't forget this part-->
                         <!-- Admin Tools Dropdown -->
                         {% if 'permissions' in session and 'Admin' in session['permissions'] %}
@@ -130,7 +135,7 @@
                                     <li><a href="{{ url_for('staff.staff_add_airplane') }}" class="nav-link">Add Airplane</a></li>
                                     <li><a href="{{ url_for('staff.staff_add_airport') }}" class="nav-link">Add Airport</a></li>
                                     <li><a href="{{ url_for('staff.staff_grant_permission') }}" class="nav-link">Grant Permission</a></li>
-                                    <li><a href="{{ url_for('staff.staff_add_booking_agent') }}" class="nav-link">Add Booking Agent</a></li>
+                                    <li><a href="{{ url_for('staff.staff_add_agent') }}" class="nav-link">Add Booking Agent</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -141,6 +146,7 @@
                             <a href="{{ url_for('staff.staff_operator') }}" class="nav-link">Operator Tools</a>
                         </li>
                         {% endif %}
+
                         {% endif %}     
 
                     </ul>

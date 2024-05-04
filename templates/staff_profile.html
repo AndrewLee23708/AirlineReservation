@@ -3,8 +3,10 @@
 
 <div class="container mt-5">
     <h2>Staff Dashboard</h2>
-    <p>Manage and view flights operated by {{ session['airline'] }}.</p>
-    
+    <p>Manage and view flights operated by {{ session['airline']}}.</p>
+    <p>By default show upcoming flights in next 30 days</p>
+    <p>If search by flights, make sure to specify dates</p>
+
     <!-- Flight Search Form -->
     <form method="post">
         {{ form.hidden_tag() }}

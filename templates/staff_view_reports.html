@@ -1,0 +1,15 @@
+{% extends "base_profile.html" %}
+{% block content %}
+
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.start_date.label }} {{ form.start_date }}
+    {{ form.end_date.label }} {{ form.end_date }}
+    <input type="submit" value="Generate Report">
+</form>
+
+{% if plot_url %}
+    <img src="data:image/png;base64,{{ plot_url }}" alt="Monthly Ticket Sales">
+{% endif %}
+
+{% endblock %}

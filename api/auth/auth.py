@@ -42,8 +42,8 @@ def login_customer():
             
             return redirect(url_for('general.home'))  # Bring back to homepage         
         
-        else:  # handle the case when the email does not exist
-            error = 'Invalid login or username'
+        else: 
+             flash(f'Invalid Login details', 'danger')
 
     # This part is executed on GET request, which is responsible for retrieving the form page to display to the user
     return render_template('login_customer.html', form = form)       
@@ -74,7 +74,7 @@ def login_agent():
             return redirect(url_for('general.home'))  
         
         else:
-            error = 'Invalid login or username'
+             flash(f'Invalid Login details', 'danger')
 
     return render_template('login_agent.html', form = form)
 
@@ -117,7 +117,7 @@ def login_airline_staff():
             return redirect(url_for('general.home'))
         
         else:
-            error = 'Invalid login or username'
+            flash(f'Invalid Login details', 'danger')
 
     return render_template('login_airline_staff.html', form = form)
 

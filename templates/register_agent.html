@@ -1,57 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-    <div>
-        <div class="bd-example-snippet bd-code-snippet"><div class="bd-example">
-        <form class="row g-3" method="POST" action="">
-          {{ form.hidden_tag() }}
-          <legend class="border-bottom mb-4">{{ title }}</legend>
-          <div class="col-md-4">
-            <label class="form-label">{{ form.email.label(class="form-control-label") }}</label>
-                {% if form.email.errors %}
-                    {{ form.email(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.email.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.email(class="form-control") }}
-                {% endif %}
-          </div>
-          <div class="col-md-4">
-              <label class="form-label">{{ form.password.label(class="form-control-label") }}</label>
-              {% if form.password.errors %}
-                  {{ form.password(class="form-control is-invalid") }}
-                  <div class="invalid-feedback">
-                      {% for error in form.password.errors %}
-                          {{ error }}
-                      {% endfor %}
-                  </div>
-              {% else %}
-                  {{ form.password(class="form-control") }}
-              {% endif %}
-          </div>
+{% macro render_field(field) %}
+<div class="col-md-6">
+    <label class="form-label">{{ field.label }}</label>
+    {{ field(class="form-control" + (" is-invalid" if field.errors else "")) }}
+    {% for error in field.errors %}
+        <div class="invalid-feedback">{{ error }}</div>
+    {% endfor %}
+</div>
+{% endmacro %}
 
-            <div class="col-md-12">
-                <label class="form-label">{{ form.booking_agent_id.label(class="form-control-label") }}</label>
-                {% if form.booking_agent_id.errors %}
-                    {{ form.booking_agent_id(class="form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                        {% for error in form.booking_agent_id.errors %}
-                            <span>{{ error }}</span>
-                        {% endfor %}
-                    </div>
-                {% else %}
-                    {{ form.booking_agent_id(class="form-control") }}
-                {% endif %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center border-bottom pb-3">Agent Registration</h3>
+                    <form method="POST" action="" class="row g-3">
+                        {{ form.hidden_tag() }}
+                        {{ render_field(form.email) }}
+                        {{ render_field(form.password) }}
+                        {{ render_field(form.booking_agent_id) }}
+                        <div class="col-12">
+                            <button class="btn btn-primary" type="submit">Submit form</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="space"></div>
-          <div class="col-12">
-            <button class="btn btn-primary" type="submit">Submit form</button>
-          </div>
-        </form>
-        </div></div>
-
-      </div>
-{% endblock content %}
+        </div>
+    </div>
+</div>
+{% endblock %}
