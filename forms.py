@@ -124,6 +124,31 @@ class Purchase(FlaskForm):
 # Agent-related Forms
 ################
 
+# Purchasing flights for customers
+class Agent_Purchase(FlaskForm):
+    customer = StringField('Customer Email:', validators = [DataRequired(), Email(), Length(min = 1, max = 50)])
+    agent = StringField('Agent ID:', validators = [])
+    submit = SubmitField('Purchase')
+
+# View commissions
+class Agent_Commissions(FlaskForm):
+    identifier = StringField('Identifier')
+    start_date = DateField('Start Date', validators = [])
+    end_date = DateField('End Date', validators = [])
+    submit = SubmitField('View Commissions')
+
+# View top customers
+class Agent_Top_Customers(FlaskForm):
+    start_date = DateField('Start Date:', validators = [])
+    end_date = DateField('End Date:', validators = [])
+    submit = SubmitField('Search')
+
+# Retrieve upcoming booked flights
+class Agent_Upcoming_Flights(FlaskForm):
+    departure_airport = StringField('Departure Airport:', validators = [])
+    arrival_airport = StringField('Arrival Airport:', validators = [])
+    departure_time = StringField('Departure Time:', validators = [])
+    arrival_time = StringField('Arrival Time:')
 
 
 
