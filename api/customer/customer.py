@@ -35,7 +35,13 @@ def customer_profile():
     cur = conn.cursor(dictionary=True)
 
     #for customer view flights
-    cur.execute("SELECT * FROM purchases NATURAL JOIN ticket NATURAL JOIN flight WHERE customer_email = %s", (session['email'],))
+    cur.execute("""
+        SELECT f.airline_name, f.flight_num, f.departure_airport, f.departure_time, f.arrival_airport, f.arrival_time, f.price, t.ticket_id
+        FROM purchases p
+        JOIN ticket t ON p.ticket_id = t.ticket_id
+        JOIN flight f ON t.flight_num = f.flight_num AND t.airline_name = f.airline_name
+        WHERE p.customer_email = %s AND f.departure_time BETWEEN %s AND %s
+    """, (session['email'], start_date, end_date))
     flights = cur.fetchall()
 
     #Get spending data

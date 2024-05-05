@@ -28,7 +28,6 @@ def staff_profile():
         start_time = form.start_time.data or start_time
         end_time = form.end_time.data or end_time
 
-    # Simplified handling of form data
     departure_airport = form.departure_airport.data
     arrival_airport = form.arrival_airport.data
     flight_number = form.flight_number.data

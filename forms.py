@@ -15,62 +15,63 @@ Define Forms Here
 
 # Customer Registration Form
 class CustomerRegister(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
-    name = StringField('Full Name', validators=[DataRequired(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
-    building_number = StringField('Building Number', validators=[DataRequired(), Length(max=30)])
-    street = StringField('Street', validators=[DataRequired(), Length(max=30)])
-    city = StringField('City', validators=[DataRequired(), Length(max=30)])
-    state = StringField('State', validators=[DataRequired(), Length(max=30)])
-    phone_number = StringField('Phone Number', validators=[DataRequired(), Length(max=11)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=100)])
+    name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
+    building_number = StringField('Building Number', validators=[DataRequired(), Length(max=100)])
+    street = StringField('Street', validators=[DataRequired(), Length(max=100)])
+    city = StringField('City', validators=[DataRequired(), Length(max=100)])
+    state = StringField('State', validators=[DataRequired(), Length(max=100)])
+    phone_number = StringField('Phone Number', validators=[DataRequired(), Length(max=20)])
     passport_number = StringField('Passport Number', validators=[DataRequired(), Length(max=30)])
     passport_expiration = DateField('Passport Expiration Date', validators=[DataRequired()])
-    passport_country = StringField('Passport Country', validators=[DataRequired(), Length(max=50)])
+    passport_country = StringField('Passport Country', validators=[DataRequired(), Length(max=100)])
     date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
 
     submit = SubmitField('Customer Registeration')
 
+
 # Agent Registration Form
 class AgentRegister(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
-    booking_agent_id = StringField('Booking Agent ID', validators=[DataRequired(), Length(max=11)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
+    booking_agent_id = StringField('Booking Agent ID', validators=[DataRequired(), Length(max=20)])
 
     submit = SubmitField('Agent Registeration')
 
 
 # Staff Registration Form
 class StaffRegister(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
-    first_name = StringField('First Name', validators=[DataRequired(), Length(max=50)])
-    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=50)])
+    username = StringField('Username', validators=[DataRequired(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
+    first_name = StringField('First Name', validators=[DataRequired(), Length(max=100)])
+    last_name = StringField('Last Name', validators=[DataRequired(), Length(max=100)])
     date_of_birth = DateField('Date of Birth', validators=[DataRequired()])
-    airline_name = StringField('Airline Name', validators=[DataRequired(), Length(max=50)])
+    airline_name = StringField('Airline Name', validators=[DataRequired(), Length(max=20)])
 
     submit = SubmitField('Staff Registeration')
 
 
 # Customer Login Form
 class CustomerLogin(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
 
     submit = SubmitField('Customer Login')
 
 
 # Booking Agent Login Form
 class AgentLogin(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
+    email = StringField('Email', validators=[DataRequired(), Email(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
 
     submit = SubmitField('Agent Login')
 
 
 # Staff Login Form
 class StaffLogin(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(max=50)])
-    password = PasswordField('Password', validators=[DataRequired(), Length(max=60)])
+    username = StringField('Username', validators=[DataRequired(), Length(max=100)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(max=100)])
 
     submit = SubmitField('Staff Login')
 
@@ -79,21 +80,23 @@ class StaffLogin(FlaskForm):
 # General Forms
 ################
 
-### Used for general flights, also for user-specific flights (ie agent or staff search
-class PublicSearchUpcomingFlightForm(FlaskForm):
-    departure_place = StringField('Departure Airport/City', validators=[])
-    arrival_place = StringField('Arrival Airport/City', validators=[])
-    departure_time = StringField('Departure Time', validators=[])               #time field is not importing correctly, use string field
-    arrival_time = StringField('Arrival Time', validators=[])
+### Used for general flights, also for user-specific flights (ie agent search)
+class SearchFlights(FlaskForm):
+    departure_place = StringField('Departure Airport', validators=[])
+    arrival_place = StringField('Arrival Airport', validators=[])
+    end_time = DateField('Departure Time', validators=[])               #time field is not importing correctly
+    start_time = DateField('Arrival Time', validators=[])               ##### THIS IS NOT DEP/APARTURE, this is the values Departure time can be between in.
 
     submit = SubmitField('Search')
 
-class PublicSearchFlightStatusForm(FlaskForm):
+# Same thing here, updated it so it's departure in between certain values
+class SearchFlightStatus(FlaskForm):
     flight_number = StringField('Flight Number', validators=[])
-    departure_time = StringField('Departure Time', validators=[])
-    arrival_time = StringField('Arrival Time', validators=[])
+    start_time = DateField('Departure Time', validators=[])
+    end_time = DateField('Arrival Time', validators=[])
 
     submit = SubmitField('Search')
+
 
 #for searching between time intervals for spending (Customer, Agent)
 class TimeInterval(FlaskForm):
@@ -102,55 +105,12 @@ class TimeInterval(FlaskForm):
 
     submit = SubmitField('Search')
 
+
 #For customers and agents purchasing things
 class Purchase(FlaskForm):
-    agent = StringField('Agent_ID', validators=[])
     customer = StringField('Customer_Email', validators=[])
     
     submit = SubmitField('Purchase')
-
-################
-# Customer-related Forms
-################
-
-
-
-
-
-
-
-
-################
-# Agent-related Forms
-################
-
-# Purchasing flights for customers
-class Agent_Purchase(FlaskForm):
-    customer = StringField('Customer Email:', validators = [DataRequired(), Email(), Length(min = 1, max = 50)])
-    agent = StringField('Agent ID:', validators = [])
-    submit = SubmitField('Purchase')
-
-# View commissions
-class Agent_Commissions(FlaskForm):
-    identifier = StringField('Identifier')
-    start_date = DateField('Start Date', validators = [])
-    end_date = DateField('End Date', validators = [])
-    submit = SubmitField('View Commissions')
-
-# View top customers
-class Agent_Top_Customers(FlaskForm):
-    start_date = DateField('Start Date:', validators = [])
-    end_date = DateField('End Date:', validators = [])
-    submit = SubmitField('Search')
-
-# Retrieve upcoming booked flights
-class Agent_Upcoming_Flights(FlaskForm):
-    departure_airport = StringField('Departure Airport:', validators = [])
-    arrival_airport = StringField('Arrival Airport:', validators = [])
-    departure_time = StringField('Departure Time:', validators = [])
-    arrival_time = StringField('Arrival Time:')
-
-
 
 
 ################
@@ -165,7 +125,8 @@ class StaffSearchFlight(FlaskForm):
     departure_airport = StringField('Departure Airport', validators=[])
     arrival_airport = StringField('Arrival Airport', validators=[])
 
-    submit = SubmitField('Search Flight')
+    submit = SubmitField('Search')
+
 
 ### Admin forms
 # We validate it using javascript form for arrival time, wtf-form is lacking some features
@@ -199,13 +160,13 @@ class GrantPermissions(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(max=20)])
     permission = SelectField('Permission', choices=['Operator', 'Admin'])
 
-    submit = SubmitField('Grant Permission')
+    submit = SubmitField('Grant')
 
 
 class AddAgent(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email(), Length(max=20)])
 
-    submit = SubmitField('Add Booking Agent to Airline')
+    submit = SubmitField('Add')
 
 
 ### Operator form
@@ -214,15 +175,5 @@ class ChangeFlightStatus(FlaskForm):
     flight_num = IntegerField('Flight Number', validators=[DataRequired()])
     status = SelectField('New Status', choices=['', 'upcoming', 'in_progress', 'delayed'])
 
-    submit = SubmitField('Submit Change')
-
-
-### Staff view stuff
-
-class ViewCommissionsForm(FlaskForm):
-    start_date = DateField('Start Date', validators=[])
-    end_date = DateField('End Date', validators=[])
-
-    submit = SubmitField('View Reports')
-
+    submit = SubmitField('Confirm')
 

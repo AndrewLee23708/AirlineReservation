@@ -10,7 +10,8 @@
             <p class="card-text">
                 Departure Time: {{ flight.departure_time }}<br>
                 Arrival Time: {{ flight.arrival_time }}<br>
-                Price: ${{ "%.2f"|format(flight.price) }}
+                Price: ${{ "%.2f"|format(flight.price) }} <br>
+                Seats Available: {{ left }}
             </p>
             <form method="POST">
                 {{ form.hidden_tag() }}

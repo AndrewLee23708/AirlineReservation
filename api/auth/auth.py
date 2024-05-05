@@ -98,7 +98,7 @@ def login_airline_staff():
             session['username'] = form.username.data
             session['type'] = 'staff'
 
-            # Retrieve permission types and airline name
+            # Retrieve permission types and airline name (can have multiple)
             query = "SELECT permission_type FROM permission WHERE username = %s"
             cur.execute(query, (form.username.data,))
             permissions = cur.fetchall()
@@ -128,23 +128,21 @@ def register():
     return render_template('register.html')
 
 
-
+# Use parameterized queries to prevent SQL injection
 @auth.route('/register_customer', methods=['GET', 'POST'])
 def register_customer():
     form = forms.CustomerRegister()
 
     if form.validate_on_submit():    # follow validation rules
 
-        # Use parameterized queries to prevent SQL injection
         conn = setup_db()
         cur = conn.cursor(dictionary=True) 
 
-        #Check for duplicate emails
+        #Check  duplicate emails
         query_find_email = "SELECT email FROM customer WHERE email = %s"
         cur.execute(query_find_email, (form.email.data,))
         dup_emails = cur.fetchall()
         
-        #first check for duplicate emails
         if dup_emails:
             print("Duplicate Email warning")
             flash('Email already belongs to an account!', 'danger')                                   ##double check this
@@ -153,7 +151,7 @@ def register_customer():
             ### We create hashed_password
             hashed_password = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
 
-            # Parameterized queries for the insert operation, pass them as a tuple to defend against SQL injections
+            # Parameterized means pass them as a tuple to defend against SQL injections
             query = """
             INSERT INTO customer (
                 email, name, password, building_number, street, city, state, 
@@ -176,6 +174,8 @@ def register_customer():
         
     return render_template('register_customer.html', form=form)
 
+
+
 #Make sure it dispalys the Error Message
 @auth.route('/register_agent', methods=['GET', 'POST'])
 def register_agent():
@@ -194,27 +194,25 @@ def register_agent():
             # Debug print
             print(f"Registering agent with email: {email} and ID: {booking_agent_id}")
 
-            # Check for duplicate email or agent ID using parameterized queries
+            # Check for duplicate email / agent ID using parameterized queries
             cur.execute("SELECT email FROM booking_agent WHERE email = %s OR booking_agent_id = %s", (email, booking_agent_id))
             if cur.fetchone():
                 print("Already exists!")
                 flash('Email or Agent ID already exists!', 'danger')
 
             else:
-                # Insert the new agent into the database
                 cur.execute("INSERT INTO booking_agent (email, password, booking_agent_id) VALUES (%s, %s, %s)",
                             (email, hashed_password, booking_agent_id))
                 conn.commit()
 
                 # Debug print
-                print("Agent registered successfully.")
+                print("Agent registered successfully. ")
 
                 flash('Successful Account Creation', 'success')
 
                 return redirect(url_for('authentication.login'))  # redirect to the login endpoint 
             
         except Exception as e:
-            # Print the exception message
             print(f"An error occurred: {e}")
             flash('An error occurred during registration.', 'danger')
         finally:
@@ -224,10 +222,10 @@ def register_agent():
     return render_template('register_agent.html', form=form)  # bring to agent login tab
 
 
+
 ### Register Airline Staff (Make sure to throw an error message is airline does not exist)
 @auth.route('/register_airline_staff', methods=['GET', 'POST'])
 def register_airline_staff():
-
     form = forms.StaffRegister()
 
     if form.validate_on_submit():
@@ -241,21 +239,27 @@ def register_airline_staff():
         conn = setup_db()
         cur = conn.cursor(dictionary=True) 
         
-        # Check for duplicate username using parameterized queries
-        cur.execute("SELECT username FROM airline_staff WHERE username = %s", (username,))
-        if cur.fetchone():
-            flash('User name already exists!', 'danger')
+        # Check if the airline exists
+        cur.execute("SELECT airline_name FROM airline WHERE airline_name = %s", (airline_name,))
+        airline_exists = cur.fetchone()
 
+        if not airline_exists:
+            flash('The specified airline does not exist!', 'danger')
         else:
-            cur.execute("INSERT INTO airline_staff (username, password, first_name, last_name, date_of_birth, airline_name) VALUES (%s, %s, %s, %s, %s, %s)",
-                        (username, hashed_password, first_name, last_name, date_of_birth, airline_name))
-            conn.commit()
-            flash(f'Account created for {username}!', 'success')
-            return redirect(url_for('authentication.login'))       ### redirect user back to login page to login
+            # Check for duplicate username using parameterized queries
+            cur.execute("SELECT username FROM airline_staff WHERE username = %s", (username,))
+            if cur.fetchone():
+                flash('User name already exists!', 'danger')
+            else:
+                cur.execute("INSERT INTO airline_staff (username, password, first_name, last_name, date_of_birth, airline_name) VALUES (%s, %s, %s, %s, %s, %s)",
+                            (username, hashed_password, first_name, last_name, date_of_birth, airline_name))
+                conn.commit()
+                flash(f'Account created for {username}!', 'success')
+                return redirect(url_for('authentication.login'))  # redirect user back to login page to login
 
         cur.close()
 
-    return render_template('register_airline_staff.html', form=form)
+    return render_template('register_airline_staff.html', form=form)       ### redirect user back to login page to login
 
 
 

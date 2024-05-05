@@ -93,9 +93,10 @@
                                 </ul>
                             </div>
                         </li>
+
                         {% if session['type'] == 'customer' %}
                         <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#customerLinks" role="button" aria-expanded="false" aria-controls="customerLinks">Customer Links</a>
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#customerLinks" role="button" aria-expanded="false" aria-controls="customerLinks">Customer Links: {{session['email']}}</a>
                             <div class="collapse" id="customerLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                     <li><a href="#" class="nav-link">No Links :C</a></li>
@@ -105,7 +106,7 @@
                         
                         {% elif session['type'] == 'agent' %}
                         <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#agentLinks" role="button" aria-expanded="false" aria-controls="agentLinks">Agent Links</a>
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#agentLinks" role="button" aria-expanded="false" aria-controls="agentLinks">Agent Links: {{session['email']}}</a>
                             <div class="collapse" id="agentLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                     <li><a href="{{ url_for('agent.view_commissions') }}" class="nav-link">View Commissions</a></li>
@@ -114,10 +115,10 @@
                             </div>
                         </li>
 
-                        <!-- Staff information part -->
+                        <!-- Staff information part --> 
                         {% elif session['type'] == 'staff' %}
                         <li class="nav-item">
-                            <a class="nav-link collapsed" data-toggle="collapse" href="#staffLinks" role="button" aria-expanded="false" aria-controls="staffLinks">Staff Links</a>
+                            <a class="nav-link collapsed" data-toggle="collapse" href="#staffLinks" role="button" aria-expanded="false" aria-controls="staffLinks">Staff Links: {{session['username']}}</a>
                             <div class="collapse" id="staffLinks">
                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                     <li><a href="{{ url_for('staff.view_booking_agents') }}" class="nav-link">View Booking Agents</a></li>

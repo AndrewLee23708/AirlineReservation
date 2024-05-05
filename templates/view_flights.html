@@ -1,64 +1,74 @@
 {% extends "base.html" %}
-
 {% block content %}
-<div class="container mt-5">
+<div class="container mt-4">
     <h2>View Upcoming Flights</h2>
-    <p>Select a flight to book tickets.</p>
+    <div class="card">
+        <div class="card-body">
+            <!-- Flight search form -->
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ form.departure_place.label(class="form-label") }}
+                    {{ form.departure_place(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.arrival_place.label(class="form-label") }}
+                    {{ form.arrival_place(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.start_time.label(class="form-label") }}
+                    {{ form.start_time(class="form-control") }}
+                </div>
+                <div class="mb-3">
+                    {{ form.end_time.label(class="form-label") }}
+                    {{ form.end_time(class="form-control") }}
+                </div>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+        </div>
+    </div>
 
-    <!-- Flight search form -->
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            <label for="departure_place">Departure Airport/City:</label>
-            {{ form.departure_place(class='form-control') }}
-        </div>
-        <div class="form-group">
-            <label for="arrival_place">Arrival Airport/City:</label>
-            {{ form.arrival_place(class='form-control') }}
-        </div>
-        <div class="form-group">
-            <label for="departure_time">Departure Time:</label>
-            {{ form.departure_time(class='form-control') }}
-        </div>
-        <div class="form-group">
-            <label for="arrival_time">Arrival Time:</label>
-            {{ form.arrival_time(class='form-control') }}
-        </div>
-        <button type="submit" class="btn btn-primary">Search</button>
-    </form>
-
-    <!-- Display search results as a table -->
+    <!-- Display search results as a card -->
     {% if flights %}
-    <div class="table-responsive mt-4">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Flight Number</th>
-                    <th>Departure Airport</th>
-                    <th>Arrival Airport</th>
-                    <th>Departure Time</th>
-                    <th>Arrival Time</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for flight in flights %}
-                <tr>
-                    <td>{{ flight.flight_num }}</td>
-                    <td>{{ flight.departure_airport }}</td>
-                    <td>{{ flight.arrival_airport }}</td>
-                    <td>{{ flight.departure_time }}</td>
-                    <td>{{ flight.arrival_time }}</td>
-                    <td>
-                        <a href="{{ url_for('general.purchase_ticket', flight_num=flight.flight_num) }}" class="btn btn-success">Buy</a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="card mt-4">
+        <div class="card-header">
+            Flight Search Results
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Departure Airport</th>
+                        <th>Arrival Airport</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Time</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for flight in flights %}
+                    <tr>
+                        <td>{{ flight.flight_num }}</td>
+                        <td>{{ flight.departure_airport }}</td>
+                        <td>{{ flight.arrival_airport }}</td>
+                        <td>{{ flight.departure_time }}</td>
+                        <td>{{ flight.arrival_time }}</td>
+                        <td>
+                            <a href="{{ url_for('general.purchase_ticket', flight_num=flight.flight_num) }}" class="btn btn-success">Buy</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">No flights found matching your criteria.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
     {% else %}
-    <p>No flights available based on your search criteria. Please adjust your search and try again.</p>
+    <div class="alert alert-info mt-3">No flights available based on your search criteria. Please adjust your search and try again.</div>
     {% endif %}
 </div>
 {% endblock %}

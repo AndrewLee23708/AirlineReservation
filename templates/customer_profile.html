@@ -1,11 +1,11 @@
 {% extends "base_profile.html" %}
+
 {% block content %}
 
 <div class="container mt-5">
     <h2>Customer Spending Profile</h2>
     <p>Review your spending habits over the selected date range.</p>
     
-    <!-- Spending form to select date range -->
     <form method="post">
         {{ form.hidden_tag() }}
         <div class="form-group">
@@ -28,28 +28,37 @@
     {% endif %}
 
     <!-- Display purchased flights -->
-    <h2> Purchased Flights </h2>
-    {% if purchased_flights %}
+    <h2> Your Purchased Flights </h2>
+    {% if flights %}
         <div class="mt-4">
-            <h3>Your Purchased Flights</h3>
-            <table class="table">
-                <thead>
+            <table class="table table-striped">
+                <thead class="thead-light">
                     <tr>
+                        <th>Airline</th>
+                        <th>Ticket ID</th>
                         <th>Flight Number</th>
-                        <th>Departure</th>
-                        <th>Arrival</th>
-                        <th>Date</th>
-                        <th>Status</th>
+                        <th>Departure Airport</th>
+                        <th>Departure Time</th>
+                        <th>Arrival Airport</th>
+                        <th>Arrival Time</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for flight in purchased_flights %}
+                    {% for flight in flights %}
                         <tr>
+                            <td>{{ flight.airline_name }}</td>
+                            <td>{{ flight.ticket_id }}</td>
                             <td>{{ flight.flight_num }}</td>
                             <td>{{ flight.departure_airport }}</td>
+                            <td>{{ flight.departure_time }}</td> 
                             <td>{{ flight.arrival_airport }}</td>
-                            <td>{{ flight.departure_time }}</td>
-                            <td>{{ flight.status }}</td>
+                            <td>{{ flight.arrival_time}}</td>
+                            <td>{{ flight.price}}</td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7">No flights found.</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -58,8 +67,6 @@
     {% else %}
         <p>No purchased flights to display.</p>
     {% endif %}
-    
-
 </div>
 
 {% endblock content %}

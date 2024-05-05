@@ -1,4 +1,64 @@
-{% extends "base_profile.html" %}
+{% extends 'base_profile.html' %}
+
 {% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Top Customers Analysis</h2>
+
+    <!-- Bar Charts Display -->
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <img src="data:image/png;base64,{{ plot_url }}" alt="Customer Charts" class="img-fluid">
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h4 class="text-center">Top 5 Customers by Tickets Purchased</h4>
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Customer Email</th>
+                        <th>Tickets Purchased</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in ticket_counts %}
+                    <tr>
+                        <td>{{ customer.customer_email }}</td>
+                        <td>{{ customer.ticket_count }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2">No data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h4 class="text-center">Top 5 Customers by Commission Earned</h4>
+            <table class="table table-bordered">
+                <thead class="thead-light">
+                    <tr>
+                        <th>Customer Email</th>
+                        <th>Commission Earned ($)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in commission_sums %}
+                    <tr>
+                        <td>{{ customer.customer_email }}</td>
+                        <td>{{ customer.commission_sum | round(2) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2">No data available</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

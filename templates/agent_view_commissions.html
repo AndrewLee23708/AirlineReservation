@@ -1,4 +1,59 @@
-{% extends "base_profile.html" %}
-{% block content %}
+{% extends 'base_profile.html' %}
 
+{% block content %}
+<div class="container mt-3">
+    <h2>View Commissions</h2>
+    <!-- Form for selecting date range -->
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                {{ form.start_date.label(class="form-control-label") }}
+                {{ form.start_date(class="form-control") }}
+            </div>
+            <div class="form-group col-md-4">
+                {{ form.end_date.label(class="form-control-label") }}
+                {{ form.end_date(class="form-control") }}
+            </div>
+            <div class="form-group col-md-4 align-self-end">
+                <button type="submit" class="btn btn-primary"> Search </button>
+            </div>
+        </div>
+    </form>
+    
+    <!-- Tabs for displaying the results -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#ticketsSold" data-toggle="tab">Tickets Sold</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#totalCommissions" data-toggle="tab">Total Commissions</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#avgCommission" data-toggle="tab">Average Commission</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="ticketsSold">
+            <p></p>
+            <h4>Total Tickets Sold</h4>
+            <p></p>
+            <p>{{ num_tickets }}</p>
+        </div>
+        <div class="tab-pane fade" id="totalCommissions">
+            <p></p>
+            <h4>Total Commissions Earned</h4>
+            <p></p>
+            <p>${{ "%.2f"|format(sum_commissions) }}</p>
+        </div>
+        <div class="tab-pane fade" id="avgCommission">
+            <p></p>
+            <h4>Average Commission Per Ticket</h4>
+            <p></p>
+            <p>${{ "%.2f"|format(avg_commission) }}</p>
+        </div>
+    </div>
+</div>
 {% endblock %}

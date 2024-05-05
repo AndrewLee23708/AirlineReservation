@@ -2,51 +2,57 @@ from flask import Flask, render_template, request, session, url_for, redirect, B
 from flask_bcrypt import Bcrypt
 import forms
 from database import setup_db
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 general = Blueprint('general', __name__)
 
-@general.route('/')           ### Double check, why double route?
+@general.route('/') 
 @general.route('/home')
 def home():
-    
     return render_template('home.html')
 
 
 @general.route('/flight_status', methods=['GET', 'POST'])
 def flight_status():
-    form = forms.PublicSearchFlightStatusForm()
+    form = forms.SearchFlightStatus()
     search_results = None
+
+    #Default time range to include a broad range of flights
+    start_time = datetime.today() - relativedelta(years=100)
+    end_time = datetime.today() + relativedelta(years=100)
+
+    if form.validate_on_submit():
+        start_time = form.start_time.data or start_time
+        end_time = form.end_time.data or end_time
 
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
-    #Append query if details inputted:
-    query = """
-        SELECT flight_num, departure_time, arrival_time, status
-        FROM flight
-    """
-    conditions = []
+    # Build the query dynamically
+    query_parts = [
+        "SELECT flight_num, departure_time, arrival_time, status",
+        "FROM flight"
+    ]
     parameters = []
 
-    ### We want to build it, since sometimes user dosen't put in that data
+    # Always filter by the broad or specific time range
+    conditions = ["departure_time BETWEEN %s AND %s"]
+    parameters += [start_time, end_time]
+
     if form.flight_number.data:
         conditions.append("flight_num = %s")
         parameters.append(form.flight_number.data)
-    if form.departure_time.data:
-        conditions.append("departure_time = %s")
-        parameters.append(form.departure_time.data)
-    if form.arrival_time.data:
-        conditions.append("arrival_time = %s")
-        parameters.append(form.arrival_time.data)
 
     if conditions:
-        query += " WHERE " + " AND ".join(conditions)
+        query_parts.append("WHERE " + " AND ".join(conditions))
 
-    cur.execute(query, parameters)
+    final_query = " ".join(query_parts)
+    cur.execute(final_query, parameters)
     search_results = cur.fetchall()
     cur.close()
 
-    if form.validate_on_submit() and not search_results:
+    if not search_results and form.validate_on_submit():
         flash('No flights match your search criteria.', 'warning')
 
     return render_template('flight_status.html', form=form, search_results=search_results)
@@ -56,17 +62,29 @@ def flight_status():
 ### Customers and Agents first submit and can view buy tickets here, you will need to add functionalities here that manage this
 @general.route('/view_flights', methods=['GET', 'POST'])
 def view_flights():
-    form = forms.PublicSearchUpcomingFlightForm()
+    form = forms.SearchFlights()
     flights = None
+
+    # Default time range to a very broad range to include all flights if no dates are specified
+    start_time = datetime.today() - relativedelta(years=100)
+    end_time = datetime.today() + relativedelta(years=100)
+
+    if form.validate_on_submit():
+        start_time = form.start_time.data or start_time
+        end_time = form.end_time.data or end_time
 
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
-    query = """
-        SELECT flight_num, departure_airport, arrival_airport, departure_time, arrival_time
-        FROM flight
-    """
-    conditions = []
+
+    #We can build SQL query dynamically so that we can make some of the inputs optional (default values)
+    query_parts = [
+        "SELECT flight_num, departure_airport, arrival_airport, departure_time, arrival_time",
+        "FROM flight"
+    ]
     parameters = []
+
+    conditions = ["departure_time BETWEEN %s AND %s"]
+    parameters += [start_time, end_time]
 
     if form.departure_place.data:
         conditions.append("departure_airport = %s")
@@ -74,24 +92,20 @@ def view_flights():
     if form.arrival_place.data:
         conditions.append("arrival_airport = %s")
         parameters.append(form.arrival_place.data)
-    if form.departure_time.data:
-        conditions.append("departure_time = %s")
-        parameters.append(form.departure_time.data)
-    if form.arrival_time.data:
-        conditions.append("arrival_time = %s")
-        parameters.append(form.arrival_time.data)
 
     if conditions:
-        query += " WHERE " + " AND ".join(conditions)
+        query_parts.append("WHERE " + " AND ".join(conditions))
 
-    cur.execute(query, parameters)
+    final_query = " ".join(query_parts)
+    cur.execute(final_query, parameters)
     flights = cur.fetchall()
     cur.close()
 
-    if form.validate_on_submit() and not flights:
-        flash('No upcoming flights found.', 'warning')
+    if not flights and form.validate_on_submit():
+        flash('No flights found matching your criteria.', 'warning')
 
     return render_template('view_flights.html', form=form, flights=flights)
+
 
 
 
@@ -99,6 +113,9 @@ def view_flights():
 ### Purchase ticket for customer and agent
 ### Check if session is customer or agent, if no one logged in, send them to login page.
 ### For this I will use SQL procedure to process if there is enough seats for users
+
+#####DOUBLE CHECK, agents can only purchase flights they work for
+
 ##### Assumption: We assume one customer can buy multiple seats, theres a Mr.Beast video where he buys the whole plane :)
 @general.route('/purchase_ticket/<int:flight_num>', methods=['GET', 'POST'])
 def purchase_ticket(flight_num):
@@ -109,6 +126,8 @@ def purchase_ticket(flight_num):
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
+    left = 0
+
     # Fetch flight details
     cur.execute("""
     SELECT airline_name, flight_num, departure_airport, departure_time,
@@ -117,33 +136,52 @@ def purchase_ticket(flight_num):
     WHERE flight_num = %s""", (flight_num,))
     flight = cur.fetchone()
 
+    # Check and return available seats
+    cur.execute("""
+    SELECT f.airline_name, a.seats - COUNT(t.ticket_id) AS available_seats
+    FROM flight f
+    JOIN airplane a ON f.airplane_id = a.airplane_id
+    LEFT JOIN ticket t ON f.flight_num = t.flight_num
+    WHERE f.flight_num = %s
+    GROUP BY f.airline_name, a.seats
+    """, (flight_num,))
+    seat_check = cur.fetchone()
+
+    left = seat_check['available_seats']  #Geet number of seats left over
+
     form = forms.Purchase()
+
     
     if form.validate_on_submit():
-        agent_id = form.agent.data if 'agent' in session['type'] else None
         customer_email = form.customer.data if 'agent' in session['type'] else session.get('email')
 
         # Verify customer exists if an agent is booking
         if 'agent' in session['type']:
+            #log agent id to input into purchases later
+            agent_id = session['agent_id']
+
+            # Verify if agent works for the airline of the flight
+            cur.execute("""
+                SELECT airline_name FROM booking_agent_work_for
+                WHERE email = %s AND airline_name = %s
+            """, (session['email'], flight['airline_name']))             #check if email corresponds
+            airline_match = cur.fetchone()
+
+            if not airline_match:
+                flash("You can only purchase tickets for airlines you represent.", 'danger')
+                cur.close()
+                return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num)
+            
             cur.execute("SELECT email FROM customer WHERE email = %s", (customer_email,))
             customer_exist = cur.fetchone()
+            
             if not customer_exist:
                 flash('Customer email does not exist.', 'danger')
                 cur.close()
                 return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num)
 
-        # Check for available seats
-        cur.execute("""
-            SELECT f.airline_name, a.seats - COUNT(t.ticket_id) AS available_seats
-            FROM flight f
-            JOIN airplane a ON f.airplane_id = a.airplane_id
-            LEFT JOIN ticket t ON f.flight_num = t.flight_num
-            WHERE f.flight_num = %s
-            GROUP BY f.airline_name, a.seats
-        """, (flight_num,))
-        seat_check = cur.fetchone()
-
-        if seat_check and seat_check['available_seats'] > 0:
+        # check if we can insert anymore tickets
+        if seat_check and left > 0:
             # Insert a ticket
             cur.execute("""
                 INSERT INTO ticket (airline_name, flight_num)
@@ -171,7 +209,7 @@ def purchase_ticket(flight_num):
         flash('Flight not found.', 'danger')
         return redirect(url_for('general.view_flights'))
 
-    return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num)
+    return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num, left = left)
 
 
 
@@ -225,7 +263,7 @@ def profile():
     
 
 
-### we don't need this but don't delete, I will implement this directly into the users dashboard
+### we don't need this but don't delete, I will implement this directly into the users profiles
 ### leave this here so you know this functionality will not be implemented.
 # @general.route('view_my_flights')  
 #     def view_flights():
