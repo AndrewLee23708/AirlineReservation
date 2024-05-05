@@ -1,18 +1,49 @@
 {% extends "base_profile.html" %}
 {% block content %}
-
 <div class="container">
     <h2>Revenue Comparison</h2>
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Revenue Last Month</h3>
-            <img src="{{ month_image }}" alt="Revenue Last Month">
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs" id="revenueTabs" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="month-tab" data-toggle="tab" href="#month" role="tab" aria-controls="month" aria-selected="true">Last Month</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="year-tab" data-toggle="tab" href="#year" role="tab" aria-controls="year" aria-selected="false">Last Year</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="revenueTabContent">
+        <!-- Last Month -->
+        <div class="tab-pane fade show active" id="month" role="tabpanel" aria-labelledby="month-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ month_image }}" alt="Revenue Last Month" style="width: 100%; height: auto;">
+                </div>
+                <div class="col-md-6">
+                    <h3>Details</h3>
+                    <p>Total Direct Revenue: ${{ month_data['revenue'] }}</p>
+                    <p>Total Direct Tickets Sold: {{ month_data['tickets_sold'] }}</p>
+                    <p>Total Indirect Revenue: ${{ month_indirect_data['revenue'] }}</p>
+                    <p>Total Indirect Tickets Sold: {{ month_indirect_data['tickets_sold'] }}</p>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6">
-            <h3>Revenue Last Year</h3>
-            <img src="{{ year_image }}" alt="Revenue Last Year">
+        <!-- Last Year -->
+        <div class="tab-pane fade" id="year" role="tabpanel" aria-labelledby="year-tab">
+            <div class="row">
+                <div class="col-md-6">
+                    <img src="{{ year_image }}" alt="Revenue Last Year" style="width: 100%; height: auto;">
+                </div>
+                <div class="col-md-6">
+                    <h3>Details</h3>
+                    <p>Total Direct Revenue: ${{ year_data['revenue'] }}</p>
+                    <p>Total Direct Tickets Sold: {{ year_data['tickets_sold'] }}</p>
+                    <p>Total Indirect Revenue: ${{ year_indirect_data['revenue'] }}</p>
+                    <p>Total Indirect Tickets Sold: {{ year_indirect_data['tickets_sold'] }}</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-
 {% endblock %}

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, DateField, SubmitField, DateTimeField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, DateField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length, Email
 
 '''
@@ -160,7 +160,7 @@ class GrantPermissions(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(max=20)])
     permission = SelectField('Permission', choices=['Operator', 'Admin'])
 
-    submit = SubmitField('Grant')
+    submit = SubmitField('Confirm')
 
 
 class AddAgent(FlaskForm):

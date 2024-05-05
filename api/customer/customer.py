@@ -34,14 +34,15 @@ def customer_profile():
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
+    #dont Natural join for this one, for some reason dosent work
     #for customer view flights
     cur.execute("""
         SELECT f.airline_name, f.flight_num, f.departure_airport, f.departure_time, f.arrival_airport, f.arrival_time, f.price, t.ticket_id
         FROM purchases p
         JOIN ticket t ON p.ticket_id = t.ticket_id
         JOIN flight f ON t.flight_num = f.flight_num AND t.airline_name = f.airline_name
-        WHERE p.customer_email = %s AND f.departure_time BETWEEN %s AND %s
-    """, (session['email'], start_date, end_date))
+        WHERE p.customer_email = %s 
+    """, (session['email'],))
     flights = cur.fetchall()
 
     #Get spending data

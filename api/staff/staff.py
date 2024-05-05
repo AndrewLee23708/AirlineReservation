@@ -71,6 +71,10 @@ def staff_profile():
 @staff.route('/staff_create_flight', methods=['GET', 'POST'])
 def staff_create_flight():
 
+    if 'permissions' not in session or 'Admin' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+    
     form = forms.CreateFlight()
     if form.validate_on_submit():
         conn = setup_db()
@@ -111,6 +115,11 @@ def staff_create_flight():
 ## Add airplane
 @staff.route('/staff_add_airplane', methods=['GET', 'POST'])
 def staff_add_airplane():
+
+    if 'permissions' not in session or 'Admin' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+
     form = forms.AddAirplane()
     if form.validate_on_submit():
         conn = setup_db()
@@ -138,6 +147,11 @@ def staff_add_airplane():
 #Works
 @staff.route('/staff_add_airport', methods=['GET', 'POST'])
 def staff_add_airport():
+
+    if 'permissions' not in session or 'Admin' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+
     form = forms.AddAirport()
     if form.validate_on_submit():
         conn = setup_db()
@@ -167,6 +181,11 @@ def staff_add_airport():
 #Works
 @staff.route('/staff_grant_permission', methods=['GET', 'POST'])
 def staff_grant_permission():
+
+    if 'permissions' not in session or 'Admin' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+
     form = forms.GrantPermissions()
     if form.validate_on_submit():
         conn = setup_db()
@@ -203,6 +222,11 @@ def staff_grant_permission():
 # Works
 @staff.route('/staff_add_agent', methods=['GET', 'POST'])
 def staff_add_agent():
+
+    if 'permissions' not in session or 'Admin' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+
     form = forms.AddAgent()
     if form.validate_on_submit():
         conn = setup_db()
@@ -253,6 +277,11 @@ def staff_add_agent():
 # Change Flight_status
 @staff.route('/staff_operator', methods=['GET', 'POST'])
 def staff_operator():
+
+    if 'permissions' not in session or 'Operator' not in session['permissions']:
+        flash('You do not have administrative access to this page.', 'warning')
+        return redirect(url_for('general.home'))
+
     form = forms.ChangeFlightStatus()
     if form.validate_on_submit():
         conn = setup_db()
@@ -283,7 +312,13 @@ def staff_operator():
 
     return render_template('staff_operator.html', form=form)
 
+
+
+#####
+
 ### Endpoints for staffs in general:
+
+#####
 
 # View all the booking agents: Top 5 booking agents based on number of tickets sales for the past month and
 # past year. Top 5 booking agents based on the amount of commission received for the last year.
@@ -294,7 +329,9 @@ def view_booking_agents():
 
     def get_top_agents(metric, period, metric_name="num_tickets"):
         interval = "1 MONTH" if period == 'month' else "1 YEAR"
-        column = "COUNT(*)" if metric == 'tickets' else "SUM(flight.price)"  # Ensure price is from the flight table
+        # Adjust to count each ticket by referencing the ticket table directly
+    
+        column = "COUNT(ticket.ticket_id)" if metric == 'tickets' else "SUM(flight.price)"
         query = f"""
             SELECT purchases.booking_agent_id, {column} AS {metric_name}
             FROM purchases
@@ -335,6 +372,7 @@ def view_booking_agents():
 
 
 
+
 # View frequent customers: Airline Staff will also be able to see the most frequent customer within the last
 # year. In addition, Airline Staff will be able to see a list of all flights a particular Customer has taken only on
 # that particular airline
@@ -362,19 +400,20 @@ def view_frequent_customers():
     return render_template('staff_view_customers.html', customers=customers)
 
 
-
-
+# each individual customer tickets (for that airline specifcally)
 @staff.route('/view_customer_tickets/<customer_email>', methods=['GET'])
 def view_customer_tickets(customer_email):
     conn = setup_db()
     cur = conn.cursor(dictionary=True)
 
     query = """
-        SELECT flight.flight_num, flight.departure_airport, flight.arrival_airport, flight.departure_time, flight.arrival_time, flight.price
+        SELECT ticket.ticket_id, flight.flight_num, flight.departure_airport, flight.arrival_airport,
+               flight.departure_time, flight.arrival_time, flight.price
         FROM purchases
         JOIN ticket ON purchases.ticket_id = ticket.ticket_id
         JOIN flight ON ticket.flight_num = flight.flight_num
-        WHERE customer_email = %s AND flight.airline_name = %s
+        WHERE purchases.customer_email = %s AND flight.airline_name = %s
+        ORDER BY flight.departure_time
     """
     cur.execute(query, (customer_email, session['airline']))
     tickets = cur.fetchall()
@@ -447,14 +486,16 @@ def view_reports():
 @staff.route('/compare_revenue', methods=['GET'])
 def compare_revenue():
     conn = setup_db()
-    cur = conn.cursor(dictionary=True) 
+    cur = conn.cursor(dictionary=True)
 
-    # Function to fetch revenue data
-    def fetch_revenue(sales_type, period):
+    # Function to fetch revenue and ticket count
+    def fetch_data(sales_type, period):
         interval = "1 MONTH" if period == "month" else "1 YEAR"
         booking_condition = "IS NULL" if sales_type == "direct" else "IS NOT NULL"
         query = f"""
-            SELECT COALESCE(SUM(price), 0) AS revenue
+            SELECT
+                COALESCE(SUM(flight.price), 0) AS revenue,
+                COUNT(ticket.ticket_id) AS tickets_sold
             FROM purchases
             JOIN ticket ON purchases.ticket_id = ticket.ticket_id
             JOIN flight ON ticket.flight_num = flight.flight_num
@@ -463,42 +504,54 @@ def compare_revenue():
             AND purchases.booking_agent_id {booking_condition}
         """
         cur.execute(query, (session['airline'],))
-        return cur.fetchone()['revenue']
+        return cur.fetchone()
 
     data = {
-        'direct_month': fetch_revenue('direct', 'month'),
-        'direct_year': fetch_revenue('direct', 'year'),
-        'indirect_month': fetch_revenue('indirect', 'month'),
-        'indirect_year': fetch_revenue('indirect', 'year')
+        'direct_month': fetch_data('direct', 'month'),
+        'direct_year': fetch_data('direct', 'year'),
+        'indirect_month': fetch_data('indirect', 'month'),
+        'indirect_year': fetch_data('indirect', 'year')
     }
 
     cur.close()
     conn.close()
 
     # Generate and send plots
-    def generate_plot(data, period):
-        labels = ['Direct Sales', 'Indirect Sales']
-        sizes = [data[f'direct_{period}'], data[f'indirect_{period}']]
-        fig, ax = plt.subplots()
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
-        ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-        # Convert plot to PNG image
-        png_image = BytesIO()
-        plt.savefig(png_image, format='png')
-        plt.close(fig)
-        png_image.seek(0)
-        uri = 'data:image/png;base64,' + base64.b64encode(png_image.getvalue()).decode('utf-8')
-        return uri
-
-    # Generate images for each time period
     month_image = generate_plot(data, 'month')
     year_image = generate_plot(data, 'year')
 
-    return render_template('staff_view_revenue.html', month_image=month_image, year_image=year_image)
+    # Send the detailed data to the template
+    return render_template(
+        'staff_view_revenue.html', 
+        month_image=month_image, year_image=year_image,
+        month_data=data['direct_month'], year_data=data['direct_year'],
+        month_indirect_data=data['indirect_month'], year_indirect_data=data['indirect_year']
+    )
+
+## For plot generation
+def generate_plot(data, period):
+    labels = ['Direct Sales', 'Indirect Sales']
+    sizes = [data[f'direct_{period}']['revenue'], data[f'indirect_{period}']['revenue']]
+    colors = ['#87ceeb','#ff474c']  # Blue for direct, red for indirect
+    explode = (0.1, 0)  # Only "explode" the first slice
+
+    fig, ax = plt.subplots()
+    ax.pie(sizes, explode=explode, labels=labels, autopct='%1.1f%%',
+           shadow=True, startangle=90, colors=colors)
+    ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+
+    # Convert plot to PNG image
+    png_image = BytesIO()
+    plt.savefig(png_image, format='png')
+    plt.close(fig)
+    png_image.seek(0)
+    uri = 'data:image/png;base64,' + base64.b64encode(png_image.getvalue()).decode('utf-8')
+    return uri
+
 
 
 # ViewTop destinations: Find the top 3 most popular destinations for last 3 months and last year.
+##### !!! NOT AIRLINE SPECIFIC
 # It works
 @staff.route('/view_top_destinations', methods=['GET'])
 def view_top_destinations():
@@ -513,12 +566,12 @@ def view_top_destinations():
         JOIN ticket t ON p.ticket_id = t.ticket_id
         JOIN flight f ON t.flight_num = f.flight_num
         JOIN airport a ON f.arrival_airport = a.airport_name
-        WHERE f.airline_name = %s AND p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
+        WHERE p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH)
         GROUP BY place
         ORDER BY ticket_count DESC
         LIMIT 3
     """
-    cursor.execute(month_query, (session['airline'],))
+    cursor.execute(month_query,)
     month = cursor.fetchall()
 
     # last year
@@ -528,12 +581,12 @@ def view_top_destinations():
         JOIN ticket t ON p.ticket_id = t.ticket_id
         JOIN flight f ON t.flight_num = f.flight_num
         JOIN airport a ON f.arrival_airport = a.airport_name
-        WHERE f.airline_name = %s AND p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
+        WHERE p.purchase_date >= DATE_SUB(CURDATE(), INTERVAL 1 YEAR)
         GROUP BY place
         ORDER BY ticket_count DESC
         LIMIT 3
     """
-    cursor.execute(year_query, (session['airline'],))
+    cursor.execute(year_query, )
     year = cursor.fetchall()
 
     print(month) 

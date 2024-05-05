@@ -3,70 +3,89 @@
 {% block content %}
 
 <div class="container mt-5">
-    <h2>Customer Spending Profile</h2>
-    <p>Review your spending habits over the selected date range.</p>
-    
-    <form method="post">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            <label for="start_date">Start Date:</label>
-            {{ form.start_date(class='form-control') }}
-        </div>
-        <div class="form-group">
-            <label for="end_date">End Date:</label>
-            {{ form.end_date(class='form-control') }}
-        </div>
-        <button type="submit" class="btn btn-primary">Update Chart</button>
-    </form>
+    <h2>Customer Profile</h2>
 
-    <!-- Display the generated spending chart image -->
-    {% if plot_url %}
-        <div class="mt-4">
-            <h3>Spending Chart</h3>
-            <img src="data:image/png;base64,{{ plot_url }}" alt="Monthly Spending Chart" style="max-width: 100%;">
-        </div>
-    {% endif %}
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" href="#spending" data-toggle="tab">Spending Profile</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#flights" data-toggle="tab">Purchased Flights</a>
+        </li>
+    </ul>
 
-    <!-- Display purchased flights -->
-    <h2> Your Purchased Flights </h2>
-    {% if flights %}
-        <div class="mt-4">
-            <table class="table table-striped">
-                <thead class="thead-light">
-                    <tr>
-                        <th>Airline</th>
-                        <th>Ticket ID</th>
-                        <th>Flight Number</th>
-                        <th>Departure Airport</th>
-                        <th>Departure Time</th>
-                        <th>Arrival Airport</th>
-                        <th>Arrival Time</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for flight in flights %}
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Spending Profile Tab -->
+        <div class="tab-pane fade show active" id="spending">
+            <p></p>
+            <p>Review your spending habits over the selected date range.</p>
+            <form method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <label for="start_date">Start Date:</label>
+                    {{ form.start_date(class='form-control') }}
+                </div>
+                <div class="form-group">
+                    <label for="end_date">End Date:</label>
+                    {{ form.end_date(class='form-control') }}
+                </div>
+                <button type="submit" class="btn btn-primary">Update Chart</button>
+            </form>
+
+            {% if plot_url %}
+            <div class="mt-4">
+                <h3>Spending Chart</h3>
+                <img src="data:image/png;base64,{{ plot_url }}" alt="Monthly Spending Chart" style="max-width: 100%;">
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Purchased Flights Tab -->
+        <div class="tab-pane fade" id="flights">
+            <p></p>
+            <h2>Your Purchased Flights</h2>
+            {% if flights %}
+            <div class="mt-4">
+                <table class="table table-striped">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Airline</th>
+                            <th>Ticket ID</th>
+                            <th>Flight Number</th>
+                            <th>Departure Airport</th>
+                            <th>Departure Time</th>
+                            <th>Arrival Airport</th>
+                            <th>Arrival Time</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for flight in flights %}
                         <tr>
                             <td>{{ flight.airline_name }}</td>
                             <td>{{ flight.ticket_id }}</td>
                             <td>{{ flight.flight_num }}</td>
                             <td>{{ flight.departure_airport }}</td>
-                            <td>{{ flight.departure_time }}</td> 
+                            <td>{{ flight.departure_time }}</td>
                             <td>{{ flight.arrival_airport }}</td>
-                            <td>{{ flight.arrival_time}}</td>
-                            <td>{{ flight.price}}</td>
+                            <td>{{ flight.arrival_time }}</td>
+                            <td>{{ flight.price }}</td>
                         </tr>
-                    {% else %}
+                        {% else %}
                         <tr>
-                            <td colspan="7">No flights found.</td>
+                            <td colspan="8">No flights found.</td>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p>No purchased flights to display.</p>
+            {% endif %}
         </div>
-    {% else %}
-        <p>No purchased flights to display.</p>
-    {% endif %}
+    </div>
 </div>
 
 {% endblock content %}

@@ -119,6 +119,11 @@ def view_flights():
 ##### Assumption: We assume one customer can buy multiple seats, theres a Mr.Beast video where he buys the whole plane :)
 @general.route('/purchase_ticket/<int:flight_num>', methods=['GET', 'POST'])
 def purchase_ticket(flight_num):
+
+    if session['type'] == 'staff':
+        flash('Staffs dont purchase tickets', 'warning')
+        return redirect(url_for('general.home'))
+
     if 'type' not in session or session['type'] not in ['customer', 'agent']:
         flash('Please log in to continue.', 'warning')
         return redirect(url_for('authentication.login'))
@@ -151,6 +156,7 @@ def purchase_ticket(flight_num):
 
     form = forms.Purchase()
 
+    agent_id = None   #initially none
     
     if form.validate_on_submit():
         customer_email = form.customer.data if 'agent' in session['type'] else session.get('email')
@@ -210,8 +216,6 @@ def purchase_ticket(flight_num):
         return redirect(url_for('general.view_flights'))
 
     return render_template('purchase_ticket.html', form=form, flight=flight, flight_num=flight_num, left = left)
-
-
 
 
 
